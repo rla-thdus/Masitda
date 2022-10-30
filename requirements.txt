@@ -1,4 +1,0 @@
-Django
-wheel
-psycopg2
-djangorestframework
