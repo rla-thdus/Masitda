@@ -44,6 +44,6 @@ class UserAccountAPIViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("Token", str(response.content))
 
-    def test_with_not_authorized_account_should_return_401(self):
+    def test_with_not_registered_account_should_return_401(self):
         response = self.client.post('/login', self.login_info)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
