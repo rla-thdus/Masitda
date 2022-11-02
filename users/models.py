@@ -34,11 +34,8 @@ class User(AbstractBaseUser):
     nickname = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
     address = models.TextField()
-    refresh_token = models.CharField(max_length=255, default="")
-    access_token = models.CharField(max_length=255, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField(null=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
