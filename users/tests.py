@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -49,3 +51,10 @@ class UserAccountAPIViewTest(APITestCase):
     def test_with_not_registered_account_should_return_401(self):
         response = self.client.post('/login', self.login_info)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_logout_with_authenticated_account_should_delete_token(self):
+        self.client.post('/register', self.user_data)
+        user = self.client.post('/login', self.login_info)
+        headers = {'HTTP_AUTHORIZATION': "token " + json.loads(user.content)['Token']}
+        response = self.client.get('/logout', None, **headers)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
