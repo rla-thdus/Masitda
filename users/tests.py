@@ -8,12 +8,14 @@ class UserAccountAPIViewTest(APITestCase):
             "email": "test@test.com",
             "password": "test1234",
             "nickname": "test",
+            "phone": "+821012341234",
             "address": "test시 test동 test로"
         }
         self.invalid_user_data = {
             "email": "test@test.com@test.com",
             "password": "test1234",
             "nickname": "test",
+            "phone": "+821012341234",
             "address": "test시 test동 test로"
         }
         self.login_info = {
