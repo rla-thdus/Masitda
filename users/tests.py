@@ -1,54 +1,39 @@
 import json
 
+import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+from users.factories import UserFactory
 
 
 class UserRegisterAPITest(APITestCase):
     def setUp(self):
-        self.user_data = {
-            "email": "test@test.com",
-            "password": "test1234",
-            "nickname": "test",
-            "phone": "+821012341234",
-            "address": "test시 test동 test로"
-        }
-        self.invalid_user_data = {
-            "email": "test@test.com@test.com",
-            "password": "test1234",
-            "nickname": "test",
-            "phone": "+821012341234",
-            "address": "test시 test동 test로"
-        }
+        self.user = factory.build(dict, FACTORY_CLASS=UserFactory)
+        self.invalid_user = factory.build(dict, FACTORY_CLASS=UserFactory, email="test@test@test.com")
 
     def test_registration(self):
-        response = self.client.post('/register', self.user_data)
+        response = self.client.post('/register', self.user)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_same_user_register_should_return_400(self):
-        self.client.post('/register', self.user_data)
-        response = self.client.post('/register', self.user_data)
+        self.client.post('/register', self.user)
+        response = self.client.post('/register', self.user)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_invalid_data_should_return_400(self):
-        response = self.client.post('/register', self.invalid_user_data)
+        response = self.client.post('/register', self.invalid_user)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginAPITest(APITestCase):
     def setUp(self):
-        self.user_data = {
-            "email": "test@test.com",
-            "password": "test1234",
-            "nickname": "test",
-            "phone": "+821012341234",
-            "address": "test시 test동 test로"
-        }
-        self.client.post('/register', self.user_data)
+        self.user = factory.build(dict, FACTORY_CLASS=UserFactory)
+        self.client.post('/register', self.user)
 
         self.login_info = {
-            "email": "test@test.com",
-            "password": "test1234",
+            "email": self.user.get('email'),
+            "password": self.user.get('password'),
         }
         self.fake_info = {
             "email": "test333@test.com",
@@ -67,21 +52,15 @@ class UserLoginAPITest(APITestCase):
 
 class UserLogoutAPITest(APITestCase):
     def setUp(self):
-        self.user_data = {
-            "email": "test@test.com",
-            "password": "test1234",
-            "nickname": "test",
-            "phone": "+821012341234",
-            "address": "test시 test동 test로"
-        }
+        self.user = factory.build(dict, FACTORY_CLASS=UserFactory)
+        self.client.post('/register', self.user)
         self.login_info = {
-            "email": "test@test.com",
-            "password": "test1234",
+            "email": self.user.get('email'),
+            "password": self.user.get('password'),
         }
-        self.client.post('/register', self.user_data)
-        self.user = self.client.post('/login', self.login_info)
+        self.login_user = self.client.post('/login', self.login_info)
 
     def test_logout_with_authenticated_account_should_delete_token(self):
-        headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.user.content)['Token']}
+        headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_user.content)['Token']}
         response = self.client.get('/logout', None, **headers)
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
