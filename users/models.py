@@ -5,20 +5,19 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, nickname, address, phone, password):
+    def create_user(self, email, nickname, address, phone, password, role='회원'):
         if not email:
             raise ValueError('must have user email')
         if not nickname:
             raise ValueError('must have user nickname')
-        if not address:
-            raise ValueError('must have user address')
         if not phone:
             raise ValueError('must have user phone')
         user = self.model(
             email=self.normalize_email(email),
             nickname=nickname,
             address=address,
-            phone=phone
+            phone=phone,
+            role=role
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -42,6 +41,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     address = models.TextField()
     phone = PhoneNumberField(unique=True, null=True)
+    role = models.CharField(default='회원', max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
@@ -50,7 +50,7 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nickname', 'address']
+    REQUIRED_FIELDS = ['nickname', 'phone']
 
     def has_perm(self, perm, obj=None):
         return self.is_admin

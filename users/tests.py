@@ -10,10 +10,15 @@ from users.factories import UserFactory
 class UserRegisterAPITest(APITestCase):
     def setUp(self):
         self.user = factory.build(dict, FACTORY_CLASS=UserFactory)
+        self.owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
         self.invalid_user = factory.build(dict, FACTORY_CLASS=UserFactory, email="test@test@test.com")
 
     def test_registration(self):
         response = self.client.post('/register', self.user)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_owner_registration(self):
+        response = self.client.post('/register', self.owner)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_same_user_register_should_return_400(self):
