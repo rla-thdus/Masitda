@@ -32,3 +32,4 @@ class UserFactory(factory.django.DjangoModelFactory):
     password = factory.Faker('password')
     phone = factory.LazyAttribute(lambda _: fake.phone_number())
     address = factory.Faker('address')
+    role = '회원'
