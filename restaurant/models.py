@@ -5,6 +5,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 class FoodCategory(models.Model):
     type = models.CharField(max_length=256)
 
+    def __str__(self):
+        return f'{self.id} {self.type}'
+
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=256)
