@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.permissions import IsOwnerOnly
-from restaurant.serializers import RestaurantSerializer
+from restaurants.serializers import RestaurantSerializer
 
 
 class RestaurantAPI(APIView):

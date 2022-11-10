@@ -4,7 +4,7 @@ import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from restaurant.models import FoodCategory
+from restaurants.models import FoodCategory
 from users.factories import UserFactory
 
 
@@ -44,10 +44,10 @@ class RestaurantAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        response = self.client.post('/restaurant', restaurant_info, **headers)
+        response = self.client.post('/restaurants', restaurant_info, **headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_normal_user_should_not_access_create_restaurant_api(self):
         headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_user.content)['Token']}
-        response = self.client.post('/restaurant', {}, **headers)
+        response = self.client.post('/restaurants', {}, **headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
