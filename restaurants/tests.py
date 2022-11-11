@@ -4,7 +4,7 @@ import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from restaurant.models import FoodCategory
+from restaurants.models import FoodCategory
 from users.factories import UserFactory
 
 

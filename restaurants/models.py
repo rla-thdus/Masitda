@@ -1,6 +1,8 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
+from users.models import User
+
 
 class FoodCategory(models.Model):
     type = models.CharField(max_length=256)
@@ -10,7 +12,8 @@ class FoodCategory(models.Model):
 
 
 class Restaurant(models.Model):
-    name = models.CharField(max_length=256)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='restaurants')
+    name = models.CharField(max_length=256, unique=True)
     category = models.ManyToManyField(FoodCategory)
     address = models.TextField()
     phone = PhoneNumberField(unique=True, null=True)
