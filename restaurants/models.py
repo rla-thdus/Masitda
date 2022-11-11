@@ -13,7 +13,7 @@ class FoodCategory(models.Model):
 
 class Restaurant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='restaurants')
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, unique=True)
     category = models.ManyToManyField(FoodCategory)
     address = models.TextField()
     phone = PhoneNumberField(unique=True, null=True)
