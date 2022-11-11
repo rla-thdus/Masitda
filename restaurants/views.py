@@ -9,8 +9,9 @@ from restaurants.serializers import RestaurantSerializer
 class RestaurantAPI(APIView):
     permission_classes = [IsOwnerOnly]
     def post(self, request):
-        serializer = RestaurantSerializer(request.user, data=request.data, many=False)
+        user = request.user
+        serializer = RestaurantSerializer(data=request.data, many=False)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

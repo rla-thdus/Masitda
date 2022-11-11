@@ -3,10 +3,7 @@ from rest_framework import serializers
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-
-    def get_user(self, obj):
-        return obj.id
+    user = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
 
     class Meta:
         model = Restaurant
