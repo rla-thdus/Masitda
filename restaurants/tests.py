@@ -68,3 +68,8 @@ class RestaurantAPITest(APITestCase):
         response = self.client.get('/restaurant', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.content.decode() != '[]')
+
+    def test_not_create_restaurant_user_should_return_empty_object(self):
+        response = self.client.get('/restaurant', None, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.content.decode(), '[]')
