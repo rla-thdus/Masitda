@@ -51,3 +51,8 @@ class RestaurantAPITest(APITestCase):
         headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_user.content)['Token']}
         response = self.client.post('/restaurant', {}, **headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_owner_restaurant_information(self):
+        headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_owner.content)['Token']}
+        response = self.client.get('/restaurant', None, **headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
