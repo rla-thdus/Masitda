@@ -4,7 +4,7 @@ import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from restaurants.models import FoodCategory, Restaurant
+from restaurants.models import FoodCategory
 from users.factories import UserFactory
 
 
@@ -44,12 +44,12 @@ class RestaurantAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        response = self.client.post('/restaurant', restaurant_info, **self.headers)
+        response = self.client.post('/restaurant/', restaurant_info, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_normal_user_should_not_access_create_restaurant_api(self):
         headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_user.content)['Token']}
-        response = self.client.post('/restaurant', {}, **headers)
+        response = self.client.post('/restaurant/', {}, **headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_restaurant_user_should_own_restaurant_information(self):
@@ -64,13 +64,13 @@ class RestaurantAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        self.client.post('/restaurant', restaurant_info, **self.headers)
-        response = self.client.get('/restaurant', None, **self.headers)
+        self.client.post('/restaurant/', restaurant_info, **self.headers)
+        response = self.client.get('/restaurant/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.content.decode() != '[]')
 
     def test_not_create_restaurant_user_should_return_empty_object(self):
-        response = self.client.get('/restaurant', None, **self.headers)
+        response = self.client.get('/restaurant/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode(), '[]')
 
@@ -104,7 +104,8 @@ class MenuAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        self.client.post('/restaurant', restaurant_info, **self.headers)
+        res = self.client.post('/restaurant/', restaurant_info, **self.headers)
+        print(res.content)
         data = {
             "name": "메뉴 이름",
             "price": 20000,
