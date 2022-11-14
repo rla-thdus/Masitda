@@ -4,7 +4,7 @@ import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from restaurants.models import FoodCategory
+from restaurants.models import FoodCategory, Restaurant
 from users.factories import UserFactory
 
 
@@ -73,3 +73,42 @@ class RestaurantAPITest(APITestCase):
         response = self.client.get('/restaurant', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode(), '[]')
+
+
+class MenuAPITest(APITestCase):
+    def setUp(self):
+        self.owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
+        self.client.post('/register', self.owner)
+        self.owner_login_info = {
+            "email": self.owner['email'],
+            "password": self.owner['password'],
+        }
+        self.login_owner = self.client.post('/login', self.owner_login_info)
+        self.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_owner.content)['Token']}
+
+    @classmethod
+    def setUpTestData(cls):
+        FoodCategory.objects.create(
+            type="중식"
+        )
+
+    def test_add_menu(self):
+        restaurant_info = {
+            "name": "test 식당",
+            "category": "1",
+            "address": "test",
+            "phone": "+82111222333",
+            "content": "test",
+            "min_order_price": 20000,
+            "delivery_price": 3000,
+            "open_time": "09:00:00",
+            "close_time": "22:00:00"
+        }
+        self.client.post('/restaurant', restaurant_info, **self.headers)
+        data = {
+            "name": "메뉴 이름",
+            "price": 20000,
+            "description": "메뉴 설명"
+        }
+        response = self.client.post('/restaurant/1/menus', data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

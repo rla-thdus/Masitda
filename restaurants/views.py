@@ -1,10 +1,11 @@
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.permissions import IsOwnerOnly
 from restaurants.models import Restaurant
-from restaurants.serializers import RestaurantSerializer
+from restaurants.serializers import RestaurantSerializer, MenuSerializer
 
 
 class RestaurantAPI(APIView):
@@ -20,5 +21,17 @@ class RestaurantAPI(APIView):
         serializer = RestaurantSerializer(data=request.data, many=False)
         if serializer.is_valid():
             serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MenuAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, restaurant_pk):
+        restaurant = Restaurant.objects.get(pk=restaurant_pk)
+        serializer = MenuSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(restaurant=restaurant)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
