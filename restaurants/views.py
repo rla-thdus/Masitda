@@ -26,7 +26,7 @@ class RestaurantAPI(APIView):
 
 
 class MenuAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwnerOnly]
 
     def post(self, request, restaurant_pk):
         restaurant = Restaurant.objects.get(pk=restaurant_pk)
