@@ -85,14 +85,6 @@ class MenuAPITest(APITestCase):
         }
         self.login_owner = self.client.post('/login', self.owner_login_info)
         self.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_owner.content)['Token']}
-
-    @classmethod
-    def setUpTestData(cls):
-        FoodCategory.objects.create(
-            type="중식"
-        )
-
-    def test_add_menu(self):
         restaurant_info = {
             "name": "test 식당",
             "category": "1",
@@ -104,8 +96,15 @@ class MenuAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        res = self.client.post('/restaurant/', restaurant_info, **self.headers)
-        print(res.content)
+        self.client.post('/restaurant/', restaurant_info, **self.headers)
+
+    @classmethod
+    def setUpTestData(cls):
+        FoodCategory.objects.create(
+            type="중식"
+        )
+
+    def test_add_menu_should_success_with_name_price_exists(self):
         data = {
             "name": "메뉴 이름",
             "price": 20000,

@@ -31,4 +31,4 @@ class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
     price = models.IntegerField()
-    description = models.TextField()
+    description = models.TextField(null=True)
