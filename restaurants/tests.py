@@ -112,3 +112,11 @@ class MenuAPITest(APITestCase):
         }
         response = self.client.post('/restaurant/1/menus', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_add_menu_should_fail_with_invalid_data(self):
+        data = {
+            "price": 20000,
+            "description": "메뉴 설명"
+        }
+        response = self.client.post('/restaurant/1/menus', data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
