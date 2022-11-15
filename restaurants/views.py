@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,7 +29,10 @@ class MenuAPI(APIView):
     permission_classes = [IsOwnerOnly]
 
     def post(self, request, restaurant_pk):
-        restaurant = Restaurant.objects.get(pk=restaurant_pk)
+        try:
+            restaurant = Restaurant.objects.get(pk=restaurant_pk)
+        except ObjectDoesNotExist:
+            return Response({"message: restaurant create first"}, status=status.HTTP_404_NOT_FOUND)
         serializer = MenuSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(restaurant=restaurant)
