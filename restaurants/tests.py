@@ -29,11 +29,9 @@ class RestaurantAPITest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         FoodCategory.objects.create(
-            type = "중식"
+            id=1, type = "중식"
         )
-
-    def test_new_restaurant_should_create(self):
-        restaurant_info = {
+        cls.restaurant_info = {
             "name": "test 식당",
             "category": "1",
             "address": "test",
@@ -44,7 +42,9 @@ class RestaurantAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        response = self.client.post('/restaurant/', restaurant_info, **self.headers)
+
+    def test_new_restaurant_should_create(self):
+        response = self.client.post('/restaurant/', self.restaurant_info, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_normal_user_should_not_access_create_restaurant_api(self):
@@ -53,18 +53,7 @@ class RestaurantAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_restaurant_user_should_own_restaurant_information(self):
-        restaurant_info = {
-            "name": "test 식당",
-            "category": "1",
-            "address": "test",
-            "phone": "+82111222333",
-            "content": "test",
-            "min_order_price": 20000,
-            "delivery_price": 3000,
-            "open_time": "09:00:00",
-            "close_time": "22:00:00"
-        }
-        self.client.post('/restaurant/', restaurant_info, **self.headers)
+        self.client.post('/restaurant/', self.restaurant_info, **self.headers)
         response = self.client.get('/restaurant/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.content.decode() != '[]')
