@@ -63,6 +63,12 @@ class RestaurantAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode(), '[]')
 
+    def test_get_restaurant_info_should_include_menu(self):
+        self.client.post('/restaurant/', self.restaurant_info, **self.headers)
+        response = self.client.get('/restaurant/', None, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('menu_set' in response.content.decode())
+
 
 class MenuAPITest(APITestCase):
     headers = ''
