@@ -1,5 +1,6 @@
 from django.contrib import admin
-from restaurants.models import Restaurant, FoodCategory
+from restaurants.models import Restaurant, FoodCategory, Menu
+
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
@@ -12,3 +13,11 @@ class RestaurantAdmin(admin.ModelAdmin):
 @admin.register(FoodCategory)
 class FoodCategoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'type']
+
+
+@admin.register(Menu)
+class MenuAdmin(admin.ModelAdmin):
+    list_display = ['id', 'restaurant_id', 'name', 'price', 'description']
+
+    def restaurant_id(self, obj):
+        return obj.id
