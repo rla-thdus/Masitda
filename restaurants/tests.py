@@ -2,7 +2,7 @@ import json
 
 import factory
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
 from restaurants.models import FoodCategory
 from users.factories import UserFactory
@@ -76,15 +76,19 @@ class RestaurantAPITest(APITestCase):
 
 
 class MenuAPITest(APITestCase):
-    def setUp(self):
-        self.owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
-        self.client.post('/register', self.owner)
-        self.owner_login_info = {
-            "email": self.owner['email'],
-            "password": self.owner['password'],
+    headers = ''
+    @classmethod
+    def setUpClass(cls):
+        super(MenuAPITest, cls).setUpClass()
+        client = APIClient()
+        owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
+        client.post('/register', owner)
+        owner_login_info = {
+            "email": owner['email'],
+            "password": owner['password'],
         }
-        self.login_owner = self.client.post('/login', self.owner_login_info)
-        self.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_owner.content)['Token']}
+        login_owner = client.post('/login', owner_login_info)
+        cls.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(login_owner.content)['Token']}
         restaurant_info = {
             "name": "test 식당",
             "category": "1",
@@ -96,7 +100,7 @@ class MenuAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        self.client.post('/restaurant/', restaurant_info, **self.headers)
+        client.post('/restaurant/', restaurant_info, **cls.headers)
 
     @classmethod
     def setUpTestData(cls):
