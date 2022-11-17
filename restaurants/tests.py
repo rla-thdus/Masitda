@@ -96,6 +96,12 @@ class MenuAPITest(APITestCase):
             "close_time": "22:00:00"
         }
         client.post('/restaurant/', restaurant_info, **cls.headers)
+        data = {
+            "name": "메뉴 이름",
+            "price": 20000,
+            "description": "메뉴 설명"
+        }
+        client.post('/restaurant/1/menus', data, **cls.headers)
 
     @classmethod
     def setUpTestData(cls):
@@ -128,3 +134,13 @@ class MenuAPITest(APITestCase):
         }
         response = self.client.post('/restaurant/2/menus', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_menu_should_success(self):
+        data = {
+            "name": "업데이트",
+            "price": 30000,
+            "description": "메뉴 설명"
+        }
+        response = self.client.put('/restaurant/1/menus/1', data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('업데이트' in response.content.decode())
