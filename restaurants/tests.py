@@ -151,5 +151,5 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.put('/restaurant/1/menus/2', data, **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        response = self.client.put('/restaurant/1/menus/4', data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

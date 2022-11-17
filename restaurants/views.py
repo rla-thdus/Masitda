@@ -47,11 +47,23 @@ class MenuDetailAPI(APIView):
     def put(self, request, restaurant_pk, menu_pk):
         try:
             restaurant = Restaurant.objects.get(pk=restaurant_pk)
-            menu = Menu.objects.get(pk=menu_pk)
         except ObjectDoesNotExist:
             return Response({"message: restaurant or menu pk not exists"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = MenuSerializer(menu, data=request.data)
-        if serializer.is_valid():
-            serializer.save(restaurant=restaurant)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        menu = self.get_menu(menu_pk)
+        if menu is None:
+            serializer = MenuSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(restaurant=restaurant)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            serializer = MenuSerializer(menu, data=request.data)
+            if serializer.is_valid():
+                serializer.save(restaurant=restaurant)
+                return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_menu(self, menu_pk):
+        try:
+            return Menu.objects.get(pk=menu_pk)
+        except ObjectDoesNotExist:
+            return None
