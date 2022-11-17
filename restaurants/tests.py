@@ -144,3 +144,12 @@ class MenuAPITest(APITestCase):
         response = self.client.put('/restaurant/1/menus/1', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('업데이트' in response.content.decode())
+
+    def test_update_menu_should_fail_with_not_exists_menu_pk(self):
+        data = {
+            "name": "업데이트",
+            "price": 30000,
+            "description": "메뉴 설명"
+        }
+        response = self.client.put('/restaurant/1/menus/2', data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
