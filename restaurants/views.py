@@ -47,7 +47,7 @@ class MenuDetailAPI(APIView):
         try:
             menu = Menu.objects.get(pk=menu_pk)
             if menu.restaurant != restaurant:
-                return Response({"message: restaurant pk not exists"}, status=status.HTTP_404_NOT_FOUND)
+                return None
             self.check_object_permissions(self.request, menu)
             return menu
         except ObjectDoesNotExist:
