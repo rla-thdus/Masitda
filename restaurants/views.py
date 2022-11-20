@@ -69,3 +69,11 @@ class MenuDetailAPI(APIView):
             serializer.save(restaurant=restaurant)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, restaurant_pk, menu_pk):
+        restaurant = self.get_restaurant(restaurant_pk)
+        menu = self.get_object(menu_pk, restaurant)
+        if menu is None:
+            return Response({"message: menu pk not exists"}, status=status.HTTP_404_NOT_FOUND)
+        menu.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

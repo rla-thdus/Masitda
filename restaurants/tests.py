@@ -153,3 +153,11 @@ class MenuAPITest(APITestCase):
         }
         response = self.client.patch('/restaurant/1/menus/4', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_menu_should_fail_not_exists_menu_pk(self):
+        response = self.client.delete('/restaurant/1/menus/4', None, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_menu_should_success(self):
+        response = self.client.delete('/restaurant/1/menus/1', None, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
