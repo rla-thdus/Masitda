@@ -42,28 +42,30 @@ class MenuAPI(APIView):
 
 class MenuDetailAPI(APIView):
     permission_classes = [IsOwnerOnly]
-    serializer_class = MenuSerializer
 
-    def put(self, request, restaurant_pk, menu_pk):
+    def get_object(self, menu_pk, restaurant):
         try:
-            restaurant = Restaurant.objects.get(pk=restaurant_pk)
-        except ObjectDoesNotExist:
-            return Response({"message: restaurant or menu pk not exists"}, status=status.HTTP_404_NOT_FOUND)
-        menu = self.get_menu(menu_pk)
-        if menu is None:
-            serializer = MenuSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(restaurant=restaurant)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            serializer = MenuSerializer(menu, data=request.data)
-            if serializer.is_valid():
-                serializer.save(restaurant=restaurant)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def get_menu(self, menu_pk):
-        try:
-            return Menu.objects.get(pk=menu_pk)
+            menu = Menu.objects.get(pk=menu_pk)
+            if menu.restaurant != restaurant:
+                return None
+            self.check_object_permissions(self.request, menu)
+            return menu
         except ObjectDoesNotExist:
             return None
+
+    def get_restaurant(self, restaurant_pk):
+        try:
+            return Restaurant.objects.get(pk=restaurant_pk)
+        except ObjectDoesNotExist:
+            return Response({"message: restaurant pk not exists"}, status=status.HTTP_404_NOT_FOUND)
+
+    def patch(self, request, restaurant_pk, menu_pk):
+        restaurant = self.get_restaurant(restaurant_pk)
+        menu = self.get_object(menu_pk, restaurant)
+        if menu is None:
+            return Response({"message: menu pk not exists"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = MenuSerializer(menu, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(restaurant=restaurant)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

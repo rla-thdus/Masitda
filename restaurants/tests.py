@@ -141,7 +141,7 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.put('/restaurant/1/menus/1', data, **self.headers)
+        response = self.client.patch('/restaurant/1/menus/1', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('업데이트' in response.content.decode())
 
@@ -151,5 +151,5 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.put('/restaurant/1/menus/4', data, **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.patch('/restaurant/1/menus/4', data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

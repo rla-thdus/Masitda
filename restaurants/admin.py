@@ -20,4 +20,4 @@ class MenuAdmin(admin.ModelAdmin):
     list_display = ['id', 'restaurant_id', 'name', 'price', 'description']
 
     def restaurant_id(self, obj):
-        return obj.id
+        return obj.restaurant.id
