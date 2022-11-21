@@ -63,9 +63,43 @@ class RestaurantAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode(), '[]')
 
-    def test_get_restaurant_info_should_include_menu(self):
-        self.client.post('/restaurants/', self.restaurant_info, **self.headers)
-        response = self.client.get('/restaurants/', None, **self.headers)
+
+class RestaurantDetailAPITest(APITestCase):
+    headers = ''
+    @classmethod
+    def setUpClass(cls):
+        super(RestaurantDetailAPITest, cls).setUpClass()
+        client = APIClient()
+        owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
+        client.post('/register', owner)
+        owner_login_info = {
+            "email": owner['email'],
+            "password": owner['password'],
+        }
+        login_owner = client.post('/login', owner_login_info)
+        cls.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(login_owner.content)['Token']}
+        restaurant_info = {
+            "name": "test 식당",
+            "category": "1",
+            "address": "test",
+            "phone": "+82111222333",
+            "content": "test",
+            "min_order_price": 20000,
+            "delivery_price": 3000,
+            "open_time": "09:00:00",
+            "close_time": "22:00:00"
+        }
+        res = client.post('/restaurants/', restaurant_info, **cls.headers)
+        cls.restaurant_pk = json.dumps(res.data.get('id'))
+
+    @classmethod
+    def setUpTestData(cls):
+        FoodCategory.objects.create(
+            id=1, type="중식"
+        )
+
+    def test_get_specific_restaurant_should_return_with_menu_set(self):
+        response = self.client.get(f'/restaurants/{self.restaurant_pk}', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('menu_set' in response.content.decode())
 
@@ -95,13 +129,13 @@ class MenuAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        client.post('/restaurant/', restaurant_info, **cls.headers)
+        client.post('/restaurants/', restaurant_info, **cls.headers)
         data = {
             "name": "메뉴 이름",
             "price": 20000,
             "description": "메뉴 설명"
         }
-        client.post('/restaurant/1/menus', data, **cls.headers)
+        client.post('/restaurants/1/menus', data, **cls.headers)
 
     @classmethod
     def setUpTestData(cls):
