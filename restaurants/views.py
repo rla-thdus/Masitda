@@ -25,6 +25,21 @@ class RestaurantAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class RestaurantDetailAPI(APIView):
+    def get_object(self, restaurant_pk):
+        try:
+            return Restaurant.objects.get(pk=restaurant_pk)
+        except ObjectDoesNotExist:
+            return None
+
+    def get(self, request, restaurant_pk):
+        restaurant = self.get_object(restaurant_pk)
+        if restaurant is None:
+            return Response({"message: restaurant pk not exists"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = RestaurantSerializer(restaurant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class MenuAPI(APIView):
     permission_classes = [IsOwnerOnly]
 
