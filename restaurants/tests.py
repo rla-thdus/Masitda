@@ -44,28 +44,28 @@ class RestaurantAPITest(APITestCase):
         }
 
     def test_new_restaurant_should_create(self):
-        response = self.client.post('/restaurant/', self.restaurant_info, **self.headers)
+        response = self.client.post('/restaurants/', self.restaurant_info, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_normal_user_should_not_access_create_restaurant_api(self):
         headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_user.content)['Token']}
-        response = self.client.post('/restaurant/', {}, **headers)
+        response = self.client.post('/restaurants/', {}, **headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_restaurant_user_should_own_restaurant_information(self):
-        self.client.post('/restaurant/', self.restaurant_info, **self.headers)
-        response = self.client.get('/restaurant/', None, **self.headers)
+        self.client.post('/restaurants/', self.restaurant_info, **self.headers)
+        response = self.client.get('/restaurants/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.content.decode() != '[]')
 
     def test_not_create_restaurant_user_should_return_empty_object(self):
-        response = self.client.get('/restaurant/', None, **self.headers)
+        response = self.client.get('/restaurants/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode(), '[]')
 
     def test_get_restaurant_info_should_include_menu(self):
-        self.client.post('/restaurant/', self.restaurant_info, **self.headers)
-        response = self.client.get('/restaurant/', None, **self.headers)
+        self.client.post('/restaurants/', self.restaurant_info, **self.headers)
+        response = self.client.get('/restaurants/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('menu_set' in response.content.decode())
 
@@ -115,7 +115,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post('/restaurant/1/menus', data, **self.headers)
+        response = self.client.post('/restaurants/1/menus', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_add_menu_should_fail_with_invalid_data(self):
@@ -123,7 +123,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post('/restaurant/1/menus', data, **self.headers)
+        response = self.client.post('/restaurants/1/menus', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_menu_should_fail_with_does_not_create_restaurant(self):
@@ -132,7 +132,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post('/restaurant/2/menus', data, **self.headers)
+        response = self.client.post('/restaurants/2/menus', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_menu_should_success(self):
@@ -141,7 +141,7 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.patch('/restaurant/1/menus/1', data, **self.headers)
+        response = self.client.patch('/restaurants/1/menus/1', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('업데이트' in response.content.decode())
 
@@ -151,13 +151,13 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.patch('/restaurant/1/menus/4', data, **self.headers)
+        response = self.client.patch('/restaurants/1/menus/4', data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_menu_should_fail_not_exists_menu_pk(self):
-        response = self.client.delete('/restaurant/1/menus/4', None, **self.headers)
+        response = self.client.delete('/restaurants/1/menus/4', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_menu_should_success(self):
-        response = self.client.delete('/restaurant/1/menus/1', None, **self.headers)
+        response = self.client.delete('/restaurants/1/menus/1', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
