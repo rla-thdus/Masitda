@@ -35,7 +35,7 @@ class RestaurantDetailAPI(APIView):
     def get(self, request, restaurant_pk):
         restaurant = self.get_object(restaurant_pk)
         if restaurant is None:
-            return Response({"message: restaurant pk not exists"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message: restaurant pk not exists"}, status=status.HTTP_404_NOT_FOUND)
         serializer = RestaurantSerializer(restaurant)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
