@@ -52,12 +52,6 @@ class RestaurantAPITest(APITestCase):
         response = self.client.post('/restaurants/', {}, **headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_create_restaurant_user_should_own_restaurant_information(self):
-        self.client.post('/restaurants/', self.restaurant_info, **self.headers)
-        response = self.client.get('/restaurants/', None, **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.content.decode() != '[]')
-
     def test_not_create_restaurant_user_should_return_empty_object(self):
         response = self.client.get('/restaurants/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
