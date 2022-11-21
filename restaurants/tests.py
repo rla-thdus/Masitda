@@ -98,6 +98,11 @@ class RestaurantDetailAPITest(APITestCase):
             id=1, type="중식"
         )
 
+    def test_does_not_exist_restaurant_pk_should_return_404(self):
+        does_not_exist_restaurant_pk = int(self.restaurant_pk) + 1
+        response = self.client.get(f'/restaurants/{does_not_exist_restaurant_pk}', None, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_get_specific_restaurant_should_return_with_menu_set(self):
         response = self.client.get(f'/restaurants/{self.restaurant_pk}', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
