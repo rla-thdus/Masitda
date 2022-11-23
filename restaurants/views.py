@@ -3,13 +3,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.permissions import IsOwnerOnly
+from api.permissions import IsOwnerOrReadOnly
 from restaurants.models import Restaurant, Menu
 from restaurants.serializers import RestaurantSerializer, MenuSerializer
 
 
 class RestaurantAPI(APIView):
-    permission_classes = [IsOwnerOnly]
+    permission_classes = [IsOwnerOrReadOnly]
 
     def get(self, request):
         queryset = Restaurant.objects.filter(user=request.user.id)
@@ -41,7 +41,7 @@ class RestaurantDetailAPI(APIView):
 
 
 class MenuAPI(APIView):
-    permission_classes = [IsOwnerOnly]
+    permission_classes = [IsOwnerOrReadOnly]
 
     def post(self, request, restaurant_pk):
         try:
@@ -56,7 +56,7 @@ class MenuAPI(APIView):
 
 
 class MenuDetailAPI(APIView):
-    permission_classes = [IsOwnerOnly]
+    permission_classes = [IsOwnerOrReadOnly]
 
     def get_object(self, menu_pk, restaurant):
         try:
