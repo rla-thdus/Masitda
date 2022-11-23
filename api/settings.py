@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users',
     'restaurants',
     'phonenumber_field',
+    'django_seed'
 ]
 
 REST_FRAMEWORK = {
