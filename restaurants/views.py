@@ -12,7 +12,7 @@ class RestaurantAPI(APIView):
     permission_classes = [IsOwnerOrReadOnly]
 
     def get(self, request):
-        queryset = Restaurant.objects.filter(user=request.user.id)
+        queryset = Restaurant.objects.all()
         serializer = RestaurantSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
