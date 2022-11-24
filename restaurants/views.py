@@ -63,7 +63,7 @@ class MenuDetailAPI(APIView):
             menu = Menu.objects.get(pk=menu_pk)
             if menu.restaurant != restaurant:
                 return None
-            self.check_object_permissions(self.request, menu)
+            self.check_object_permissions(self.request, restaurant)
             return menu
         except ObjectDoesNotExist:
             return None
