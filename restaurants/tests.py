@@ -102,6 +102,12 @@ class RestaurantDetailAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('menu_set' in response.content.decode())
 
+    def test_update_restaurant_only_can_owner(self):
+        update_data = {"name": "change name success"}
+        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], update_data['name'])
+
 
 class MenuAPITest(APITestCase):
     headers = ''
