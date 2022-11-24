@@ -52,10 +52,10 @@ class RestaurantAPITest(APITestCase):
         response = self.client.post('/restaurants/', {}, **headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_not_create_restaurant_user_should_return_empty_object(self):
+    def test_get_restaurants_should_return_list(self):
         response = self.client.get('/restaurants/', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.content.decode(), '[]')
+        self.assertEqual(response.data, [])
 
 
 class RestaurantDetailAPITest(APITestCase):
