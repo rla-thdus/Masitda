@@ -26,9 +26,13 @@ class RestaurantAPI(APIView):
 
 
 class RestaurantDetailAPI(APIView):
+    permission_classes = [IsOwnerOrReadOnly]
+
     def get_object(self, restaurant_pk):
         try:
-            return Restaurant.objects.get(pk=restaurant_pk)
+            restaurant = Restaurant.objects.get(pk=restaurant_pk)
+            self.check_object_permissions(self.request, restaurant)
+            return restaurant
         except ObjectDoesNotExist:
             return None
 
@@ -38,6 +42,17 @@ class RestaurantDetailAPI(APIView):
             return Response({"message: restaurant pk not exists"}, status=status.HTTP_404_NOT_FOUND)
         serializer = RestaurantSerializer(restaurant)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, restaurant_pk):
+        user = request.user
+        restaurant = self.get_object(restaurant_pk)
+        if restaurant is None:
+            return Response({"message: restaurant pk not exists"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = RestaurantSerializer(restaurant, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MenuAPI(APIView):
@@ -63,7 +78,7 @@ class MenuDetailAPI(APIView):
             menu = Menu.objects.get(pk=menu_pk)
             if menu.restaurant != restaurant:
                 return None
-            self.check_object_permissions(self.request, menu)
+            self.check_object_permissions(self.request, restaurant)
             return menu
         except ObjectDoesNotExist:
             return None

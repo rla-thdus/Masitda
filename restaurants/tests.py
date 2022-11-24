@@ -65,13 +65,21 @@ class RestaurantDetailAPITest(APITestCase):
         super(RestaurantDetailAPITest, cls).setUpClass()
         client = APIClient()
         owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
+        other_owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
         client.post('/register', owner)
+        client.post('/register', other_owner)
         owner_login_info = {
             "email": owner['email'],
-            "password": owner['password'],
+            "password": owner['password']
+        }
+        other_owner_info = {
+            "email": other_owner['email'],
+            "password": other_owner['password']
         }
         login_owner = client.post('/login', owner_login_info)
+        login_other_owner = client.post('/login', other_owner_info)
         cls.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(login_owner.content)['Token']}
+        cls.other_headers = {'HTTP_AUTHORIZATION': "token " + json.loads(login_other_owner.content)['Token']}
         restaurant_info = {
             "name": "test 식당",
             "category": "1",
@@ -101,6 +109,17 @@ class RestaurantDetailAPITest(APITestCase):
         response = self.client.get(f'/restaurants/{self.restaurant_pk}', None, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('menu_set' in response.content.decode())
+
+    def test_update_restaurant_only_can_owner(self):
+        update_data = {"name": "change name success"}
+        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], update_data['name'])
+
+    def test_update_restaurant_if_not_owner_should_permission_fail(self):
+        update_data = {"name": "change name success"}
+        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data, **self.other_headers)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class MenuAPITest(APITestCase):
