@@ -10,21 +10,9 @@ from users.factories import UserFactory
 
 class RestaurantAPITest(APITestCase):
     def setUp(self):
-        self.user = factory.build(dict, FACTORY_CLASS=UserFactory)
-        self.owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
-        self.client.post('/register', self.user)
-        self.client.post('/register', self.owner)
-        self.user_login_info = {
-            "email": self.user['email'],
-            "password": self.user['password'],
-        }
-        self.owner_login_info = {
-            "email": self.owner['email'],
-            "password": self.owner['password'],
-        }
-        self.login_user = self.client.post('/login', self.user_login_info)
-        self.login_owner = self.client.post('/login', self.owner_login_info)
-        self.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_owner.content)['Token']}
+        self.user = UserFactory.create()
+        self.owner = UserFactory.create(role='사장')
+        self.client.force_authenticate(user=self.owner)
 
     @classmethod
     def setUpTestData(cls):
@@ -44,16 +32,16 @@ class RestaurantAPITest(APITestCase):
         }
 
     def test_new_restaurant_should_create(self):
-        response = self.client.post('/restaurants/', self.restaurant_info, **self.headers)
+        response = self.client.post('/restaurants/', self.restaurant_info)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_normal_user_should_not_access_create_restaurant_api(self):
-        headers = {'HTTP_AUTHORIZATION': "token " + json.loads(self.login_user.content)['Token']}
-        response = self.client.post('/restaurants/', {}, **headers)
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post('/restaurants/', {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_restaurants_should_return_list(self):
-        response = self.client.get('/restaurants/', None, **self.headers)
+        response = self.client.get('/restaurants/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, [])
 
