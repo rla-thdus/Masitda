@@ -95,19 +95,8 @@ class RestaurantDetailAPITest(APITestCase):
 
 
 class MenuAPITest(APITestCase):
-    headers = ''
-    @classmethod
-    def setUpClass(cls):
-        super(MenuAPITest, cls).setUpClass()
-        client = APIClient()
-        owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
-        client.post('/register', owner)
-        owner_login_info = {
-            "email": owner['email'],
-            "password": owner['password'],
-        }
-        login_owner = client.post('/login', owner_login_info)
-        cls.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(login_owner.content)['Token']}
+    def setUp(self):
+        self.owner = UserFactory.create(role='사장')
         restaurant_info = {
             "name": "test 식당",
             "category": "1",
@@ -119,13 +108,16 @@ class MenuAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        client.post('/restaurants/', restaurant_info, **cls.headers)
+        self.client.force_authenticate(user=self.owner)
+        res = self.client.post('/restaurants/', restaurant_info)
+        self.restaurant_pk = json.dumps(res.data.get('id'))
         data = {
             "name": "메뉴 이름",
             "price": 20000,
             "description": "메뉴 설명"
         }
-        client.post('/restaurants/1/menus', data, **cls.headers)
+        res = self.client.post(f'/restaurants/{self.restaurant_pk}/menus', data)
+        self.menu_pk = json.dumps(res.data.get('id'))
 
     @classmethod
     def setUpTestData(cls):
@@ -139,7 +131,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post('/restaurants/1/menus', data, **self.headers)
+        response = self.client.post(f'/restaurants/{self.restaurant_pk}/menus', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_add_menu_should_fail_with_invalid_data(self):
@@ -147,7 +139,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post('/restaurants/1/menus', data, **self.headers)
+        response = self.client.post(f'/restaurants/{self.restaurant_pk}/menus', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_menu_should_fail_with_does_not_create_restaurant(self):
@@ -156,7 +148,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post('/restaurants/2/menus', data, **self.headers)
+        response = self.client.post(f'/restaurants/{int(self.restaurant_pk) + 1}/menus', data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_menu_should_success(self):
@@ -165,7 +157,7 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.patch('/restaurants/1/menus/1', data, **self.headers)
+        response = self.client.patch(f'/restaurants/{self.restaurant_pk}/menus/{self.menu_pk}', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('업데이트' in response.content.decode())
 
@@ -175,13 +167,13 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.patch('/restaurants/1/menus/4', data, **self.headers)
+        response = self.client.patch(f'/restaurants/{self.restaurant_pk}/menus/{int(self.menu_pk) + 1}', data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_menu_should_fail_not_exists_menu_pk(self):
-        response = self.client.delete('/restaurants/1/menus/4', None, **self.headers)
+        response = self.client.delete(f'/restaurants/{self.restaurant_pk}/menus/{int(self.menu_pk) + 1}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_menu_should_success(self):
-        response = self.client.delete('/restaurants/1/menus/1', None, **self.headers)
+        response = self.client.delete(f'/restaurants/{self.restaurant_pk}/menus/{self.menu_pk}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
