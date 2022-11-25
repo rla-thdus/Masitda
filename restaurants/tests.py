@@ -47,27 +47,9 @@ class RestaurantAPITest(APITestCase):
 
 
 class RestaurantDetailAPITest(APITestCase):
-    headers = ''
-    @classmethod
-    def setUpClass(cls):
-        super(RestaurantDetailAPITest, cls).setUpClass()
-        client = APIClient()
-        owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
-        other_owner = factory.build(dict, FACTORY_CLASS=UserFactory, role='사장')
-        client.post('/register', owner)
-        client.post('/register', other_owner)
-        owner_login_info = {
-            "email": owner['email'],
-            "password": owner['password']
-        }
-        other_owner_info = {
-            "email": other_owner['email'],
-            "password": other_owner['password']
-        }
-        login_owner = client.post('/login', owner_login_info)
-        login_other_owner = client.post('/login', other_owner_info)
-        cls.headers = {'HTTP_AUTHORIZATION': "token " + json.loads(login_owner.content)['Token']}
-        cls.other_headers = {'HTTP_AUTHORIZATION': "token " + json.loads(login_other_owner.content)['Token']}
+    def setUp(self):
+        self.owner = UserFactory.create(role='사장')
+        self.other_owner = UserFactory.create(role='사장')
         restaurant_info = {
             "name": "test 식당",
             "category": "1",
@@ -79,8 +61,9 @@ class RestaurantDetailAPITest(APITestCase):
             "open_time": "09:00:00",
             "close_time": "22:00:00"
         }
-        res = client.post('/restaurants/', restaurant_info, **cls.headers)
-        cls.restaurant_pk = json.dumps(res.data.get('id'))
+        self.client.force_authenticate(user=self.owner)
+        res = self.client.post('/restaurants/', restaurant_info)
+        self.restaurant_pk = json.dumps(res.data.get('id'))
 
     @classmethod
     def setUpTestData(cls):
@@ -90,23 +73,24 @@ class RestaurantDetailAPITest(APITestCase):
 
     def test_does_not_exist_restaurant_pk_should_return_404(self):
         does_not_exist_restaurant_pk = int(self.restaurant_pk) + 1
-        response = self.client.get(f'/restaurants/{does_not_exist_restaurant_pk}', None, **self.headers)
+        response = self.client.get(f'/restaurants/{does_not_exist_restaurant_pk}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_specific_restaurant_should_return_with_menu_set(self):
-        response = self.client.get(f'/restaurants/{self.restaurant_pk}', None, **self.headers)
+        response = self.client.get(f'/restaurants/{self.restaurant_pk}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('menu_set' in response.content.decode())
 
     def test_update_restaurant_only_can_owner(self):
         update_data = {"name": "change name success"}
-        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data, **self.headers)
+        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], update_data['name'])
 
     def test_update_restaurant_if_not_owner_should_permission_fail(self):
+        self.client.force_authenticate(user=self.other_owner)
         update_data = {"name": "change name success"}
-        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data, **self.other_headers)
+        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
