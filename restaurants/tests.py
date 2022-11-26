@@ -1,8 +1,10 @@
 import json
 
+import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from restaurants.factories import RestaurantFactory, FoodCategoryFactory, MenuFactory
 from restaurants.models import FoodCategory
 from users.factories import UserFactory
 
@@ -15,20 +17,8 @@ class RestaurantAPITest(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        FoodCategory.objects.create(
-            id=1, type = "중식"
-        )
-        cls.restaurant_info = {
-            "name": "test 식당",
-            "category": "1",
-            "address": "test",
-            "phone": "+82111222333",
-            "content": "test",
-            "min_order_price": 20000,
-            "delivery_price": 3000,
-            "open_time": "09:00:00",
-            "close_time": "22:00:00"
-        }
+        FoodCategoryFactory.create(id=1, type='중식')
+        cls.restaurant_info = factory.build(dict, FACTORY_CLASS=RestaurantFactory)
 
     def test_new_restaurant_should_create(self):
         response = self.client.post('/restaurants/', self.restaurant_info)
