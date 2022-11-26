@@ -30,7 +30,7 @@ class MenuFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Menu
 
-
-class FoodCategoryFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = FoodCategory
+    restaurant = ''
+    name = factory.Faker('name')
+    price = factory.Faker('pyint')
+    description = factory.Faker('sentence')
