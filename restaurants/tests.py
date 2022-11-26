@@ -39,20 +39,8 @@ class RestaurantDetailAPITest(APITestCase):
     def setUp(self):
         self.owner = UserFactory.create(role='사장')
         self.other_owner = UserFactory.create(role='사장')
-        restaurant_info = {
-            "name": "test 식당",
-            "category": "1",
-            "address": "test",
-            "phone": "+82111222333",
-            "content": "test",
-            "min_order_price": 20000,
-            "delivery_price": 3000,
-            "open_time": "09:00:00",
-            "close_time": "22:00:00"
-        }
+        self.restaurant = RestaurantFactory.create(user=self.owner)
         self.client.force_authenticate(user=self.owner)
-        res = self.client.post('/restaurants/', restaurant_info)
-        self.restaurant_pk = json.dumps(res.data.get('id'))
 
     @classmethod
     def setUpTestData(cls):
@@ -61,25 +49,25 @@ class RestaurantDetailAPITest(APITestCase):
         )
 
     def test_does_not_exist_restaurant_pk_should_return_404(self):
-        does_not_exist_restaurant_pk = int(self.restaurant_pk) + 1
+        does_not_exist_restaurant_pk = self.restaurant.id + 1
         response = self.client.get(f'/restaurants/{does_not_exist_restaurant_pk}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_specific_restaurant_should_return_with_menu_set(self):
-        response = self.client.get(f'/restaurants/{self.restaurant_pk}')
+        response = self.client.get(f'/restaurants/{self.restaurant.id}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('menu_set' in response.content.decode())
 
     def test_update_restaurant_only_can_owner(self):
         update_data = {"name": "change name success"}
-        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data)
+        response = self.client.patch(f'/restaurants/{self.restaurant.id}', update_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], update_data['name'])
 
     def test_update_restaurant_if_not_owner_should_permission_fail(self):
         self.client.force_authenticate(user=self.other_owner)
         update_data = {"name": "change name success"}
-        response = self.client.patch(f'/restaurants/{self.restaurant_pk}', update_data)
+        response = self.client.patch(f'/restaurants/{self.restaurant.id}', update_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
