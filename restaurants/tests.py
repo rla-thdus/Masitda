@@ -42,12 +42,6 @@ class RestaurantDetailAPITest(APITestCase):
         self.restaurant = RestaurantFactory.create(user=self.owner)
         self.client.force_authenticate(user=self.owner)
 
-    @classmethod
-    def setUpTestData(cls):
-        FoodCategory.objects.create(
-            id=1, type="중식"
-        )
-
     def test_does_not_exist_restaurant_pk_should_return_404(self):
         does_not_exist_restaurant_pk = self.restaurant.id + 1
         response = self.client.get(f'/restaurants/{does_not_exist_restaurant_pk}')
