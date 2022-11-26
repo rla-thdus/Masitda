@@ -1,6 +1,14 @@
 import factory
 
 from restaurants.models import Restaurant, FoodCategory, Menu
+from users.factories import fake
+
+
+class FoodCategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FoodCategory
+
+    type = factory.Faker('name')
 
 
 class RestaurantFactory(factory.django.DjangoModelFactory):
