@@ -1,11 +1,8 @@
-import json
-
 import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from restaurants.factories import RestaurantFactory, FoodCategoryFactory, MenuFactory
-from restaurants.models import FoodCategory
 from users.factories import UserFactory
 
 
