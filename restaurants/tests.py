@@ -68,33 +68,9 @@ class RestaurantDetailAPITest(APITestCase):
 class MenuAPITest(APITestCase):
     def setUp(self):
         self.owner = UserFactory.create(role='사장')
-        restaurant_info = {
-            "name": "test 식당",
-            "category": "1",
-            "address": "test",
-            "phone": "+82111222333",
-            "content": "test",
-            "min_order_price": 20000,
-            "delivery_price": 3000,
-            "open_time": "09:00:00",
-            "close_time": "22:00:00"
-        }
+        self.restaurant = RestaurantFactory.create(user=self.owner)
         self.client.force_authenticate(user=self.owner)
-        res = self.client.post('/restaurants/', restaurant_info)
-        self.restaurant_pk = json.dumps(res.data.get('id'))
-        data = {
-            "name": "메뉴 이름",
-            "price": 20000,
-            "description": "메뉴 설명"
-        }
-        res = self.client.post(f'/restaurants/{self.restaurant_pk}/menus', data)
-        self.menu_pk = json.dumps(res.data.get('id'))
-
-    @classmethod
-    def setUpTestData(cls):
-        FoodCategory.objects.create(
-            type="중식"
-        )
+        self.menu = MenuFactory.create(restaurant=self.restaurant)
 
     def test_add_menu_should_success_with_name_price_exists(self):
         data = {
@@ -102,7 +78,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post(f'/restaurants/{self.restaurant_pk}/menus', data)
+        response = self.client.post(f'/restaurants/{self.restaurant.id}/menus', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_add_menu_should_fail_with_invalid_data(self):
@@ -110,7 +86,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post(f'/restaurants/{self.restaurant_pk}/menus', data)
+        response = self.client.post(f'/restaurants/{self.restaurant.id}/menus', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_menu_should_fail_with_does_not_create_restaurant(self):
@@ -119,7 +95,7 @@ class MenuAPITest(APITestCase):
             "price": 20000,
             "description": "메뉴 설명"
         }
-        response = self.client.post(f'/restaurants/{int(self.restaurant_pk) + 1}/menus', data)
+        response = self.client.post(f'/restaurants/{self.restaurant.id + 1}/menus', data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_menu_should_success(self):
@@ -128,7 +104,7 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.patch(f'/restaurants/{self.restaurant_pk}/menus/{self.menu_pk}', data)
+        response = self.client.patch(f'/restaurants/{self.restaurant.id}/menus/{self.menu.id}', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('업데이트' in response.content.decode())
 
@@ -138,13 +114,13 @@ class MenuAPITest(APITestCase):
             "price": 30000,
             "description": "메뉴 설명"
         }
-        response = self.client.patch(f'/restaurants/{self.restaurant_pk}/menus/{int(self.menu_pk) + 1}', data)
+        response = self.client.patch(f'/restaurants/{self.restaurant.id}/menus/{self.menu.id + 1}', data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_menu_should_fail_not_exists_menu_pk(self):
-        response = self.client.delete(f'/restaurants/{self.restaurant_pk}/menus/{int(self.menu_pk) + 1}')
+        response = self.client.delete(f'/restaurants/{self.restaurant.id}/menus/{self.menu.id + 1}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_menu_should_success(self):
-        response = self.client.delete(f'/restaurants/{self.restaurant_pk}/menus/{self.menu_pk}')
+        response = self.client.delete(f'/restaurants/{self.restaurant.id}/menus/{self.menu.id}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
