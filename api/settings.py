@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'phonenumber_field',
+    'django_seed',
     'users',
     'restaurants',
-    'phonenumber_field',
-    'django_seed'
+    'orders'
 ]
 
 REST_FRAMEWORK = {
