@@ -5,6 +5,5 @@ from users.models import User
 
 
 class Blanket(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='blankets')
-    menus = models.OneToOneField(Menu, on_delete=models.CASCADE, related_name='blankets')
-    count = models.IntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
