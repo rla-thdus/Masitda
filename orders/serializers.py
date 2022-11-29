@@ -4,6 +4,8 @@ from orders.models import Blanket, BlanketItem
 
 
 class BlanketItemSerializer(serializers.ModelSerializer):
+    blanket = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+
     class Meta:
         model = BlanketItem
         fields = '__all__'
