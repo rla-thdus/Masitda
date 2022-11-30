@@ -32,3 +32,6 @@ class Menu(models.Model):
     name = models.CharField(max_length=256)
     price = models.IntegerField()
     description = models.TextField(null=True)
+
+    def __str__(self):
+        return f'{self.id} {self.name}'
