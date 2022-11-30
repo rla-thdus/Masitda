@@ -48,7 +48,9 @@ jobs:
         python manage.py makemigrations
         python manage.py makemigrations users
         python manage.py makemigrations restaurants
+        python manage.py makemigrations orders
         python manage.py migrate users
         python manage.py migrate restaurants
+        python manage.py migrate orders
         python manage.py migrate
         python manage.py test
