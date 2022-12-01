@@ -22,3 +22,8 @@ class BlanketAPITest(APITestCase):
         response = self.client.post(f'/blankets/{self.user.id}', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['quantity'], 3)
+
+    def test_get_blanket_should_return_200_when_not_exists_blanket(self):
+        response = self.client.get(f'/blankets/{self.user.id}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'BLANKET_NOT_EXISTS')
