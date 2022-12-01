@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 
 from orders.models import Blanket, BlanketItem
 from orders.serializers import BlanketItemSerializer, BlanketSerializer
+from users.models import User
 
 
 class BlanketAPI(APIView):
