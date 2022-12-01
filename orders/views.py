@@ -3,12 +3,22 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.permissions import IsMine
 from orders.models import Blanket, BlanketItem
-from orders.serializers import BlanketItemSerializer
+from orders.serializers import BlanketItemSerializer, BlanketSerializer
+from users.models import User
 
 
 class BlanketAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsMine]
+
+    def get(self, request, user_id):
+        if Blanket.objects.filter(user_id=user_id).exists():
+            blanket = Blanket.objects.get(user_id=user_id)
+            serializer = BlanketSerializer(blanket)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "BLANKET_NOT_EXISTS"}, status=status.HTTP_200_OK)
 
     def post(self, request, user_id):
         if Blanket.objects.filter(user_id=user_id).exists():
