@@ -9,3 +9,9 @@ class IsOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user
+
+
+class IsMine(BasePermission):
+    def has_permission(self, request, view):
+        user_id = view.kwargs.get('user_id', None)
+        return user_id == request.user.id
