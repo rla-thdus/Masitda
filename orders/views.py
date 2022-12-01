@@ -3,13 +3,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.permissions import IsMine
 from orders.models import Blanket, BlanketItem
 from orders.serializers import BlanketItemSerializer, BlanketSerializer
 from users.models import User
 
 
 class BlanketAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsMine]
 
     def get(self, request, user_id):
         if Blanket.objects.filter(user_id=user_id).exists():
