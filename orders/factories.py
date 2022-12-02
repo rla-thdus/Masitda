@@ -1,18 +1,18 @@
 import factory
 
-from orders.models import Blanket, BlanketItem
+from orders.models import Cart, CartItem
 
 
 class BlanketFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = Blanket
+        model = Cart
 
     user = ''
 
 
 class BlanketItemFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = BlanketItem
+        model = CartItem
 
     blanket = ''
     menu = ''
