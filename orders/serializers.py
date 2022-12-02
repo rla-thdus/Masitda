@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from orders.models import Blanket, BlanketItem
+from orders.models import Cart, BlanketItem
 
 
 class BlanketItemSerializer(serializers.ModelSerializer):
@@ -15,5 +15,5 @@ class BlanketSerializer(serializers.ModelSerializer):
     blanket_items = BlanketItemSerializer(read_only=True, many=True)
 
     class Meta:
-        model = Blanket
+        model = Cart
         fields = '__all__'
