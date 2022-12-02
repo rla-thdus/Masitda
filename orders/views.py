@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.permissions import IsMine
-from orders.models import Cart, BlanketItem
+from orders.models import Cart, CartItem
 from orders.serializers import BlanketItemSerializer, BlanketSerializer
 from users.models import User
 
@@ -26,7 +26,7 @@ class BlanketAPI(APIView):
         else:
             blanket = Cart.objects.create(user=request.user)
 
-        blanket_item = BlanketItem.objects.filter(blanket_id=blanket.id, menu=request.data['menu'])
+        blanket_item = CartItem.objects.filter(blanket_id=blanket.id, menu=request.data['menu'])
         if blanket_item.exists():
             blanket_item.update(quantity=request.data['quantity'])
             return Response({"message": "장바구니에 해당 메뉴가 추가되었습니다."}, status=status.HTTP_200_OK)

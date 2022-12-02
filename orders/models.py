@@ -9,7 +9,7 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class BlanketItem(models.Model):
-    blanket = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='blanket_items')
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
     menu = models.OneToOneField(Menu, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)

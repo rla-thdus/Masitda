@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
-from orders.models import Cart, BlanketItem
+from orders.models import Cart, CartItem
 
 
 class BlanketItemSerializer(serializers.ModelSerializer):
     blanket = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
 
     class Meta:
-        model = BlanketItem
+        model = CartItem
         fields = '__all__'
 
 class BlanketSerializer(serializers.ModelSerializer):

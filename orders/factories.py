@@ -1,6 +1,6 @@
 import factory
 
-from orders.models import Cart, BlanketItem
+from orders.models import Cart, CartItem
 
 
 class BlanketFactory(factory.django.DjangoModelFactory):
@@ -12,7 +12,7 @@ class BlanketFactory(factory.django.DjangoModelFactory):
 
 class BlanketItemFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = BlanketItem
+        model = CartItem
 
     blanket = ''
     menu = ''
