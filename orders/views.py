@@ -16,7 +16,7 @@ class BlanketAPI(APIView):
             serializer = CartSerializer(cart)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response({"message": "BLANKET_NOT_EXISTS"}, status=status.HTTP_200_OK)
+            return Response({"message": "NOT_EXISTS_CART"}, status=status.HTTP_200_OK)
 
     def post(self, request):
         if Cart.objects.filter(user=request.user).exists():
