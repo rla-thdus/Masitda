@@ -3,13 +3,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.permissions import IsMine
 from orders.models import Cart, CartItem
 from orders.serializers import CartItemSerializer, CartSerializer
 
 
 class BlanketAPI(APIView):
-    permission_classes = [IsAuthenticated, IsMine]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
         if Cart.objects.filter(user_id=user_id).exists():
