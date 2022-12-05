@@ -41,3 +41,13 @@ class BlanketAPITest(APITestCase):
     def test_get_blanket_should_return_permission_error_when_request_blanket_is_not_own(self):
         response = self.client.get(f'/carts/{self.user.id + 1}')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_exists_cart(self):
+        data = {
+            'menu': self.menu.id,
+            'quantity': 3
+        }
+        self.client.post(f'/carts/{self.user.id}', data)
+        response = self.client.delete(f'/carts/{self.user.id}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data['message'], 'DELETED')
