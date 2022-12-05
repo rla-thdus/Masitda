@@ -10,17 +10,17 @@ from orders.serializers import CartItemSerializer, CartSerializer
 class BlanketAPI(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, user_id):
-        if Cart.objects.filter(user_id=user_id).exists():
-            cart = Cart.objects.get(user_id=user_id)
+    def get(self, request):
+        if Cart.objects.filter(user=request.user).exists():
+            cart = Cart.objects.get(user=request.user)
             serializer = CartSerializer(cart)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"message": "BLANKET_NOT_EXISTS"}, status=status.HTTP_200_OK)
 
-    def post(self, request, user_id):
-        if Cart.objects.filter(user_id=user_id).exists():
-            cart = Cart.objects.get(user_id=user_id)
+    def post(self, request):
+        if Cart.objects.filter(user=request.user).exists():
+            cart = Cart.objects.get(user=request.user)
         else:
             cart = Cart.objects.create(user=request.user)
 
@@ -35,9 +35,9 @@ class BlanketAPI(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, user_id):
-        if not Cart.objects.filter(user_id=user_id).exists():
+    def delete(self, request):
+        if not Cart.objects.filter(user=request.user).exists():
             return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
-        cart = Cart.objects.get(user_id=user_id)
+        cart = Cart.objects.get(user=request.user)
         cart.delete()
         return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
