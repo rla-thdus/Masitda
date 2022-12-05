@@ -36,3 +36,9 @@ class BlanketAPI(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, user_id):
+        if not Cart.objects.filter(user_id=user_id).exists():
+            return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
+        cart = Cart.objects.get(user_id=user_id)
+        cart.delete()
+        return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
