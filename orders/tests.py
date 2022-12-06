@@ -47,3 +47,10 @@ class CartAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.data['message'], 'DELETED')
 
+    def test_delete_cart_item_with_exists_item(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(f'/carts/items/{self.cart_item.id}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data['message'], 'DELETED')
+
+
