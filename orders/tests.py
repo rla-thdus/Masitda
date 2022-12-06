@@ -36,7 +36,7 @@ class CartAPITest(APITestCase):
     def test_get_cart_should_return_200_when_not_exists_cart(self):
         response = self.client.get(f'/carts/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['message'], 'BLANKET_NOT_EXISTS')
+        self.assertEqual(response.data['message'], 'NOT_EXISTS_CART')
 
     def test_delete_exists_cart(self):
         data = {
