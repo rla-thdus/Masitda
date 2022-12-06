@@ -7,7 +7,7 @@ from orders.models import Cart, CartItem
 from orders.serializers import CartItemSerializer, CartSerializer
 
 
-class BlanketAPI(APIView):
+class CartAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -40,4 +40,18 @@ class BlanketAPI(APIView):
             return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
         cart = Cart.objects.get(user=request.user)
         cart.delete()
+        return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class CartItemAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, item_id):
+        if not Cart.objects.filter(user=request.user).exists():
+            return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
+        cart = Cart.objects.get(user=request.user)
+        if not CartItem.objects.filter(id=item_id, cart=cart).exists():
+            return Response({'message': 'NOT_EXISTS_CART_ITEM'}, status=status.HTTP_404_NOT_FOUND)
+        item = CartItem.objects.get(id=item_id, cart=cart)
+        item.delete()
         return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
