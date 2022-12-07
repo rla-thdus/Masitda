@@ -63,3 +63,17 @@ class CartAPITest(APITestCase):
         response = self.client.delete(f'/carts/items/{self.cart_item.id}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['message'], 'NOT_EXISTS_CART')
+
+    def test_update_cart_item_quantity_should_applied(self):
+        data = {"quantity": 3}
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(f'/carts/items/{self.cart_item.id}', data=data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['quantity'], data['quantity'])
+
+    def test_update_cart_item_quantity_value_smaller_than_1_should_failed(self):
+        data = {"quantity": 0}
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(f'/carts/items/{self.cart_item.id}', data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['quantity'], ['Ensure this value is greater than or equal to 1.'])

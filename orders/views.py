@@ -46,6 +46,17 @@ class CartAPI(APIView):
 class CartItemAPI(APIView):
     permission_classes = [IsAuthenticated]
 
+    def patch(self, request, item_id):
+        if not CartItem.objects.filter(id=item_id, cart__user=request.user).exists():
+            return Response({'message': 'NOT_EXISTS_CART_ITEM'}, status=status.HTTP_404_NOT_FOUND)
+        item = CartItem.objects.get(id=item_id, cart__user=request.user)
+        serializer = CartItemSerializer(item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
     def delete(self, request, item_id):
         if not Cart.objects.filter(user=request.user).exists():
             return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
