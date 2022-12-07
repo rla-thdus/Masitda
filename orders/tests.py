@@ -63,3 +63,10 @@ class CartAPITest(APITestCase):
         response = self.client.delete(f'/carts/items/{self.cart_item.id}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['message'], 'NOT_EXISTS_CART')
+
+    def test_update_cart_item_quantity_should_applied(self):
+        data = {"quantity": 3}
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(f'/carts/items/{self.cart_item.id}', data=data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['quantity'], data['quantity'])
