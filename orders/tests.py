@@ -58,3 +58,8 @@ class CartAPITest(APITestCase):
         response = self.client.delete(f'/carts/items/{self.cart_item.id + 1}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['message'], 'NOT_EXISTS_CART_ITEM')
+
+    def test_delete_cart_item_with_not_exists_cart_should_return_404(self):
+        response = self.client.delete(f'/carts/items/{self.cart_item.id}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['message'], 'NOT_EXISTS_CART')
