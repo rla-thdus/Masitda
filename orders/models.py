@@ -19,3 +19,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1, validators=[bigger_or_equal_than_1])
+
+
+class OrderStatus(models.Model):
+    name = models.CharField(max_length=256)
