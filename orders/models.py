@@ -23,3 +23,10 @@ class CartItem(models.Model):
 
 class OrderStatus(models.Model):
     name = models.CharField(max_length=256)
+
+
+class Order(models.Model):
+    cart = models.OneToOneField(Cart, on_delete=models.CASCADE, related_name='orders')
+    date = models.DateTimeField(auto_now_add=True)
+    total_price = models.IntegerField()
+    order_status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
