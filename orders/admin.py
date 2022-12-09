@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from orders.models import Cart, CartItem, OrderStatus
+from orders.models import Cart, CartItem, OrderStatus, Order
 
 
 @admin.register(Cart)
@@ -16,3 +16,8 @@ class BlanketItemAdmin(admin.ModelAdmin):
 @admin.register(OrderStatus)
 class BlanketItemAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
+
+
+@admin.register(Order)
+class BlanketItemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'cart', 'total_price', 'order_status', 'date']
