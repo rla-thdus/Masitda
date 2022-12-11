@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from orders.models import Cart, CartItem
-from orders.serializers import CartItemSerializer, CartSerializer
+from orders.serializers import CartItemSerializer, CartSerializer, OrderSerializer
 
 
 class CartAPI(APIView):
@@ -66,3 +66,16 @@ class CartItemAPI(APIView):
         item = CartItem.objects.get(id=item_id, cart=cart)
         item.delete()
         return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, cart_id):
+        if not Cart.objects.filter(id=cart_id).exists():
+            return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(cart_id=cart_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
