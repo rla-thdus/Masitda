@@ -14,10 +14,10 @@ class BlanketItemAdmin(admin.ModelAdmin):
 
 
 @admin.register(OrderStatus)
-class BlanketItemAdmin(admin.ModelAdmin):
+class OrderStatusAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
 
 
 @admin.register(Order)
-class BlanketItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'total_price', 'order_status', 'date']
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'cart', 'user', 'total_price', 'order_status', 'date']

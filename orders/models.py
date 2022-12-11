@@ -27,6 +27,7 @@ class OrderStatus(models.Model):
 
 class Order(models.Model):
     cart = models.OneToOneField(Cart, on_delete=models.CASCADE, related_name='orders')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     total_price = models.IntegerField()
     order_status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
