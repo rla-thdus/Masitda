@@ -30,4 +30,4 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     total_price = models.IntegerField()
-    order_status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
+    order_status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE, default=1)
