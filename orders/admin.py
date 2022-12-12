@@ -4,12 +4,12 @@ from orders.models import Cart, CartItem, OrderStatus, Order
 
 
 @admin.register(Cart)
-class BlanketAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'created_at']
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'created_at', 'ordered_at']
 
 
 @admin.register(CartItem)
-class BlanketItemAdmin(admin.ModelAdmin):
+class CartItemAdmin(admin.ModelAdmin):
     list_display = ['id', 'cart', 'menu', 'quantity']
 
 
