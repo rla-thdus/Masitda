@@ -23,6 +23,12 @@ class CartSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     cart = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
 
+    def create(self, validated_data):
+        order = Order.objects.create(**validated_data)
+        cart = Cart.objects.filter(id=order.cart.id)
+        cart.update(ordered_at=order.date)
+        return order
+
     class Meta:
         model = Order
         fields = '__all__'
