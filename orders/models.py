@@ -21,6 +21,10 @@ class CartItem(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1, validators=[bigger_or_equal_than_1])
 
+    @property
+    def price(self):
+        return self.quantity* self.menu.price
+
 
 class OrderStatus(models.Model):
     name = models.CharField(max_length=256)
@@ -32,5 +36,9 @@ class OrderStatus(models.Model):
 class Order(models.Model):
     cart = models.OneToOneField(Cart, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
-    total_price = models.IntegerField()
     order_status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE, default=1)
+
+    @property
+    def total_price(self):
+        return sum([item.price for item in self.cart.cart_items.all()])
+
