@@ -72,7 +72,7 @@ class OrderAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, cart_id):
-        if not Cart.objects.filter(id=cart_id).exists():
+        if not Cart.objects.filter(id=cart_id, ordered_at=None).exists():
             return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
