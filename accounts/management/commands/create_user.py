@@ -1,11 +1,11 @@
 from django.core.management import BaseCommand
 from django_seed import Seed
 
-from users.models import User
+from accounts.models import User
 
 
 class Command(BaseCommand):
-    help = 'create users'
+    help = 'create accounts'
 
     def add_arguments(self, parser):
         parser.add_argument('--number', default=1, type=int)

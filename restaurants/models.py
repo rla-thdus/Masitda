@@ -1,7 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
-from users.models import User
+from accounts.models import User
 
 
 class FoodCategory(models.Model):

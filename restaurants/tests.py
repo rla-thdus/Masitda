@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from restaurants.factories import RestaurantFactory, FoodCategoryFactory, MenuFactory
-from users.factories import UserFactory
+from accounts.factories import UserFactory
 
 
 class RestaurantAPITest(APITestCase):

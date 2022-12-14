@@ -5,7 +5,7 @@ from django.core.management import BaseCommand
 from django_seed import Seed
 
 from restaurants.models import Restaurant, FoodCategory
-from users.models import User
+from accounts.models import User
 
 
 class Command(BaseCommand):

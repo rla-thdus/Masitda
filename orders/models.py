@@ -2,7 +2,7 @@ from django.db import models
 from rest_framework.exceptions import ValidationError
 
 from restaurants.models import Menu
-from users.models import User
+from accounts.models import User
 
 
 def bigger_or_equal_than_1(value):

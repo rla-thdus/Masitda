@@ -1,7 +1,7 @@
 import factory
 
 from restaurants.models import Restaurant, FoodCategory, Menu
-from users.factories import fake
+from accounts.factories import fake
 
 
 class FoodCategoryFactory(factory.django.DjangoModelFactory):

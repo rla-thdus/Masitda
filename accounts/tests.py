@@ -4,7 +4,7 @@ import factory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from users.factories import UserFactory
+from accounts.factories import UserFactory
 
 
 class UserRegisterAPITest(APITestCase):
