@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from orders.factories import CartFactory, CartItemFactory, OrderStatusFactory
-from restaurants.factories import RestaurantFactory, MenuFactory
+from cores.factories import RestaurantFactory, MenuFactory
 from accounts.factories import UserFactory
 
 

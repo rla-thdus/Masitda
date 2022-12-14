@@ -12,7 +12,7 @@ class FoodCategory(models.Model):
 
 
 class Restaurant(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='restaurants')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cores')
     name = models.CharField(max_length=256, unique=True)
     category = models.ManyToManyField(FoodCategory, blank=True)
     address = models.TextField()

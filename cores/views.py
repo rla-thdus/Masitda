@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.permissions import IsOwnerOrReadOnly
-from restaurants.models import Restaurant, Menu
-from restaurants.serializers import RestaurantSerializer, MenuSerializer
+from cores.models import Restaurant, Menu
+from cores.serializers import RestaurantSerializer, MenuSerializer
 
 
 class RestaurantAPI(APIView):

@@ -1,6 +1,6 @@
 import factory
 
-from restaurants.models import Restaurant, FoodCategory, Menu
+from cores.models import Restaurant, FoodCategory, Menu
 from accounts.factories import fake
 
 

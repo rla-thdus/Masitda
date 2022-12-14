@@ -4,12 +4,12 @@ from django.contrib.admin.utils import flatten
 from django.core.management import BaseCommand
 from django_seed import Seed
 
-from restaurants.models import Restaurant, FoodCategory
+from cores.models import Restaurant, FoodCategory
 from accounts.models import User
 
 
 class Command(BaseCommand):
-    help = 'create restaurants'
+    help = 'create cores'
 
     def add_arguments(self, parser):
         parser.add_argument('--number', default=1, type=int)

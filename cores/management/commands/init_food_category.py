@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from restaurants.models import FoodCategory
+from cores.models import FoodCategory
 
 
 class Command(BaseCommand):

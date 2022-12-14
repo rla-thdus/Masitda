@@ -1,5 +1,5 @@
 from django.contrib import admin
-from restaurants.models import Restaurant, FoodCategory, Menu
+from cores.models import Restaurant, FoodCategory, Menu
 
 
 @admin.register(Restaurant)
