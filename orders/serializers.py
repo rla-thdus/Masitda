@@ -22,7 +22,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     cart = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
-    total_price = serializers.FloatField(read_only=True)
+    total_price = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)
@@ -32,4 +32,4 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = 'cart, date, order_status, '
+        fields = '__all__'

@@ -23,7 +23,7 @@ class CartItem(models.Model):
 
     @property
     def price(self):
-        return self.quantity* self.menu.price
+        return self.quantity * self.menu.price
 
 
 class OrderStatus(models.Model):
