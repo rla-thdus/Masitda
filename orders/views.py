@@ -1,10 +1,12 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.permissions import IsMine
 from orders.models import Cart, CartItem
-from orders.serializers import CartItemSerializer, CartSerializer
+from orders.serializers import CartItemSerializer, CartSerializer, OrderSerializer
 
 
 class CartAPI(APIView):
@@ -66,3 +68,25 @@ class CartItemAPI(APIView):
         item = CartItem.objects.get(id=item_id, cart=cart)
         item.delete()
         return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderAPI(APIView):
+    permission_classes = [IsAuthenticated, IsMine]
+
+    def get_object(self, cart_id):
+        try:
+            cart = Cart.objects.get(id=cart_id)
+            self.check_object_permissions(self.request, cart)
+            return cart
+        except ObjectDoesNotExist:
+            return None
+
+    def post(self, request, cart_id):
+        cart = self.get_object(cart_id)
+        if cart is None or cart.ordered_at is not None:
+            return Response({'message': 'INVALID_CART'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(cart=cart)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

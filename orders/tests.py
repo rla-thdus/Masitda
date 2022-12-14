@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from orders.factories import CartFactory, CartItemFactory
+from orders.factories import CartFactory, CartItemFactory, OrderStatusFactory
 from restaurants.factories import RestaurantFactory, MenuFactory
 from users.factories import UserFactory
 
@@ -9,6 +9,7 @@ from users.factories import UserFactory
 class CartAPITest(APITestCase):
     def setUp(self):
         self.owner = UserFactory.create(role='사장')
+        OrderStatusFactory.create(id=1)
         self.client.force_authenticate(user=self.owner)
         self.restaurant = RestaurantFactory.create(user=self.owner)
         self.menu = MenuFactory.create(restaurant=self.restaurant)
@@ -77,3 +78,8 @@ class CartAPITest(APITestCase):
         response = self.client.patch(f'/carts/items/{self.cart_item.id}', data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['quantity'], ['Ensure this value is greater than or equal to 1.'])
+
+    def test_order_cart_should_be_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(f'/carts/{self.cart.id}/orders')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
