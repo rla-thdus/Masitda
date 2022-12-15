@@ -1,7 +1,7 @@
 import factory
 
-from restaurants.models import Restaurant, FoodCategory, Menu
-from users.factories import fake
+from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus
+from accounts.factories import fake
 
 
 class FoodCategoryFactory(factory.django.DjangoModelFactory):
@@ -34,3 +34,26 @@ class MenuFactory(factory.django.DjangoModelFactory):
     name = factory.Faker('name')
     price = factory.Faker('pyint')
     description = factory.Faker('sentence')
+
+
+class CartFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Cart
+
+    user = ''
+
+
+class CartItemFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CartItem
+
+    cart = ''
+    menu = ''
+    quantity = factory.Faker('pyint')
+
+
+class OrderStatusFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OrderStatus
+
+    name = factory.Faker('name')

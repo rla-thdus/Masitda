@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-3zo41hq%grf1m1^wa#7us(#xwk_!!hn4bo*h)iia%7a10=fqu!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 # Application definition
 
@@ -41,9 +41,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'phonenumber_field',
     'django_seed',
-    'users',
-    'restaurants',
-    'orders'
+    'accounts',
+    'cores'
 ]
 
 REST_FRAMEWORK = {

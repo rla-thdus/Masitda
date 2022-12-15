@@ -1,6 +1,22 @@
+from .models import Restaurant, Menu, CartItem, Cart, Order
 from rest_framework import serializers
 
-from orders.models import Cart, CartItem, Order
+
+class MenuSerializer(serializers.ModelSerializer):
+    restaurant = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+
+    class Meta:
+        model = Menu
+        fields = '__all__'
+
+
+class RestaurantSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+    menu_set = MenuSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Restaurant
+        fields = '__all__'
 
 
 class CartItemSerializer(serializers.ModelSerializer):

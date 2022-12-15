@@ -4,7 +4,7 @@ from faker import Faker
 from faker.providers.phone_number.en_US import Provider
 from phonenumbers.phonenumberutil import NumberParseException
 
-from users.models import User
+from accounts.models import User
 
 class CustomPhoneProvider(Provider):
     def phone_number(self):
