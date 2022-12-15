@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'django_seed',
     'accounts',
-    'cores',
-    'orders'
+    'cores'
 ]
 
 REST_FRAMEWORK = {

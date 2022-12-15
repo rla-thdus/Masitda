@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cores.models import Restaurant, FoodCategory, Menu
+from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus, Order
 
 
 @admin.register(Restaurant)
@@ -21,3 +21,26 @@ class MenuAdmin(admin.ModelAdmin):
 
     def restaurant_id(self, obj):
         return obj.restaurant.id
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'created_at', 'ordered_at']
+
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'cart', 'menu', 'quantity', 'price']
+
+
+@admin.register(OrderStatus)
+class OrderStatusAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'cart', 'user_id', 'total_price', 'order_status', 'date']
+
+    def user_id(self, obj):
+        return obj.cart.user.id
