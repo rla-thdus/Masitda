@@ -3,6 +3,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from rest_framework.exceptions import ValidationError
 
 from accounts.models import User
+from api import settings
 
 
 class FoodCategory(models.Model):
@@ -13,7 +14,7 @@ class FoodCategory(models.Model):
 
 
 class Restaurant(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cores')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cores')
     name = models.CharField(max_length=256, unique=True)
     category = models.ManyToManyField(FoodCategory, blank=True)
     address = models.TextField()
@@ -44,7 +45,7 @@ def bigger_or_equal_than_1(value):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     ordered_at = models.DateTimeField(blank=True, null=True)
 
