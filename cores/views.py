@@ -194,11 +194,19 @@ class OrderAPI(APIView):
 
 
 class OrderDetailAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsMine]
 
-    def get(self, request, order_id):
+    def get_object(self, order_id):
         if Order.objects.filter(id=order_id).exists():
             order = Order.objects.get(id=order_id)
+            self.check_object_permissions(self.request, order)
+            return order
+        else:
+            return None
+
+    def get(self, request, order_id):
+        order = self.get_object(order_id)
+        if order is not None:
             serializer = OrderSerializer(order)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
