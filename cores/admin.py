@@ -40,7 +40,7 @@ class OrderStatusAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'user_id', 'total_price', 'order_status', 'date']
+    list_display = ['id', 'cart', 'user_id', 'restaurant', 'total_price', 'order_status', 'date']
 
     def user_id(self, obj):
         return obj.cart.user.id

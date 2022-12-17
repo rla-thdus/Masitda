@@ -80,3 +80,7 @@ class Order(models.Model):
     def total_price(self):
         return sum([item.price for item in self.cart.cart_items.all()])
 
+    @property
+    def restaurant(self):
+        return self.cart.restaurant
+
