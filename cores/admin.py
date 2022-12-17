@@ -25,7 +25,7 @@ class MenuAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'created_at', 'ordered_at']
+    list_display = ['id', 'user', 'restaurant', 'created_at', 'ordered_at']
 
 
 @admin.register(CartItem)

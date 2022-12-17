@@ -49,6 +49,10 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     ordered_at = models.DateTimeField(blank=True, null=True)
 
+    @property
+    def restaurant(self):
+        return self.cart_items.first().menu.restaurant.id
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
