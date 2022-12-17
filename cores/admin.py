@@ -25,7 +25,10 @@ class MenuAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'restaurant', 'created_at', 'ordered_at']
+    list_display = ['id', 'user', 'restaurant_id', 'created_at', 'ordered_at']
+
+    def restaurant_id(self, obj):
+        return obj.restaurant.id
 
 
 @admin.register(CartItem)
@@ -40,7 +43,10 @@ class OrderStatusAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'user_id', 'restaurant', 'total_price', 'order_status', 'date']
+    list_display = ['id', 'cart', 'user_id', 'restaurant_id', 'total_price', 'order_status', 'date']
 
     def user_id(self, obj):
         return obj.cart.user.id
+
+    def restaurant_id(self, obj):
+        return obj.restaurant.id
