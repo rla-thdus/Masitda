@@ -51,7 +51,7 @@ class Cart(models.Model):
 
     @property
     def restaurant(self):
-        return self.cart_items.first().menu.restaurant.id
+        return self.cart_items.first().menu.restaurant
 
 
 class CartItem(models.Model):
