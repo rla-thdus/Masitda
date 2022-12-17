@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.permissions import IsOwnerOrReadOnly, IsMine
+from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant
 from cores.models import Restaurant, Menu, CartItem, Cart, Order
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer
 
@@ -172,7 +172,7 @@ class CartItemAPI(APIView):
 
 
 class OrderAPI(APIView):
-    permission_classes = [IsAuthenticated, IsMine]
+    permission_classes = [IsAuthenticated, IsMineOrRestaurant]
 
     def get_object(self, cart_id):
         try:
@@ -194,7 +194,7 @@ class OrderAPI(APIView):
 
 
 class OrderDetailAPI(APIView):
-    permission_classes = [IsAuthenticated, IsMine]
+    permission_classes = [IsAuthenticated, IsMineOrRestaurant]
 
     def get_object(self, order_id):
         if Order.objects.filter(id=order_id).exists():
