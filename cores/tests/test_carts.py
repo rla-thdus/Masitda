@@ -77,9 +77,3 @@ class CartAPITest(APITestCase):
         response = self.client.patch(f'/v1/carts/items/{self.cart_item.id}', data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['quantity'], ['Ensure this value is greater than or equal to 1.'])
-
-    def test_order_cart_should_be_success(self):
-        self.client.force_authenticate(user=self.user)
-        response = self.client.post(f'/v1/carts/{self.cart.id}/orders')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-

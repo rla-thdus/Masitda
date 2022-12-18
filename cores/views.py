@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.permissions import IsOwnerOrReadOnly, IsMine
-from cores.models import Restaurant, Menu, CartItem, Cart
+from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine
+from cores.models import Restaurant, Menu, CartItem, Cart, Order
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer
 
 
@@ -191,3 +191,23 @@ class OrderAPI(APIView):
             serializer.save(cart=cart)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderDetailAPI(APIView):
+    permission_classes = [IsAuthenticated, IsMineOrRestaurant]
+
+    def get_object(self, order_id):
+        if Order.objects.filter(id=order_id).exists():
+            order = Order.objects.get(id=order_id)
+            self.check_object_permissions(self.request, order)
+            return order
+        else:
+            return None
+
+    def get(self, request, order_id):
+        order = self.get_object(order_id)
+        if order is not None:
+            serializer = OrderSerializer(order)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "NOT_EXISTS_ORDER"}, status=status.HTTP_200_OK)

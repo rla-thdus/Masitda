@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from orders.models import OrderStatus
+from cores.models import OrderStatus
 
 
 class Command(BaseCommand):

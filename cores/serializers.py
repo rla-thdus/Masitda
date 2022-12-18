@@ -27,9 +27,18 @@ class CartItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CartItemDetailSerializer(serializers.ModelSerializer):
+    cart = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+    menu = MenuSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = CartItem
+        fields = '__all__'
+
+
 class CartSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
-    cart_items = CartItemSerializer(read_only=True, many=True)
+    cart_items = CartItemDetailSerializer(read_only=True, many=True)
 
     class Meta:
         model = Cart
@@ -37,8 +46,10 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    cart = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+    cart = CartSerializer(read_only=True, many=False)
     total_price = serializers.IntegerField(read_only=True)
+    delivery_price = serializers.IntegerField(read_only=True)
+    amount_payment = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)
