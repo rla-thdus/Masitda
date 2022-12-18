@@ -11,6 +11,11 @@ class IsOwnerOrReadOnly(BasePermission):
         return obj.user == request.user
 
 
+class IsMine(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user
+
+
 class IsMineOrRestaurant(BasePermission):
     def has_object_permission(self, request, view, obj):
         if obj.cart.user == request.user or obj.restaurant.user == request.user:
