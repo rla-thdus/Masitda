@@ -21,6 +21,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 class CartItemSerializer(serializers.ModelSerializer):
     cart = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+    menu = MenuSerializer(read_only=True, many=False)
 
     class Meta:
         model = CartItem
@@ -37,8 +38,10 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    cart = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+    cart = CartSerializer(read_only=True, many=False)
     total_price = serializers.IntegerField(read_only=True)
+    delivery_price = serializers.IntegerField(read_only=True)
+    amount_payment = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)
