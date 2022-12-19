@@ -189,7 +189,7 @@ class OrderAPI(APIView):
 
     def post(self, request, cart_id):
         cart = self.get_object(cart_id)
-        if cart is None or cart.ordered_at is not None:
+        if cart is None or cart.ordered_at is not None or cart.restaurant is None:
             return Response({'message': 'INVALID_CART'}, status=status.HTTP_404_NOT_FOUND)
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
