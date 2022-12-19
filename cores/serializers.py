@@ -22,6 +22,12 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     cart = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
 
+    def create(self, validated_data):
+        cart_item = CartItem.objects.create(**validated_data)
+        cart = Cart.objects.filter(id=cart_item.cart.id)
+        cart.update(restaurant=cart_item.menu.restaurant)
+        return cart_item
+
     class Meta:
         model = CartItem
         fields = '__all__'

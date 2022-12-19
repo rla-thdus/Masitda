@@ -7,8 +7,13 @@ from accounts.factories import UserFactory
 
 class CartAPITest(APITestCase):
     def setUp(self):
-        self.owner = UserFactory.create(role='사장')
         OrderStatusFactory.create(id=1)
+        self.owner = UserFactory.create(role='사장')
+        self.owner2 = UserFactory.create(role='사장')
+        self.client.force_authenticate(user=self.owner2)
+        self.restaurant2 = RestaurantFactory.create(user=self.owner2)
+        self.other_restaurant_menu = MenuFactory.create(restaurant=self.restaurant2)
+
         self.client.force_authenticate(user=self.owner)
         self.restaurant = RestaurantFactory.create(user=self.owner)
         self.menu = MenuFactory.create(restaurant=self.restaurant)
@@ -29,6 +34,16 @@ class CartAPITest(APITestCase):
         response = self.client.post(f'/v1/carts/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['quantity'], 3)
+
+    def test_add_item_should_failed_with_different_restaurant_menu(self):
+        data = {
+            'menu': self.menu.id,
+            'quantity': 3
+        }
+        self.client.post(f'/v1/carts/', data)
+        data = {'menu': self.other_restaurant_menu.id}
+        response = self.client.post(f'/v1/carts/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_cart_should_return_200_when_exists_cart(self):
         self.client.force_authenticate(user=self.user)
