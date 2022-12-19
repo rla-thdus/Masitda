@@ -28,7 +28,9 @@ class CartAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'restaurant_id', 'created_at', 'ordered_at']
 
     def restaurant_id(self, obj):
-        return obj.restaurant.id
+        if obj.restaurant is not None:
+            return obj.restaurant.id
+        return ''
 
 
 @admin.register(CartItem)

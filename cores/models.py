@@ -48,10 +48,7 @@ class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     ordered_at = models.DateTimeField(blank=True, null=True)
-
-    @property
-    def restaurant(self):
-        return self.cart_items.first().menu.restaurant
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class CartItem(models.Model):
