@@ -14,7 +14,7 @@ class OrderAPITest(APITestCase):
         self.menu = MenuFactory.create(restaurant=self.restaurant)
 
         self.user = UserFactory.create()
-        self.cart = CartFactory.create(user=self.user)
+        self.cart = CartFactory.create(user=self.user, restaurant=self.restaurant)
         self.cart_item = CartItemFactory.create(cart=self.cart, menu=self.menu)
         self.client.force_authenticate(user=self.user)
 
