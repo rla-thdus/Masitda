@@ -18,10 +18,18 @@ class OrderAPITest(APITestCase):
         self.cart_item = CartItemFactory.create(cart=self.cart, menu=self.menu)
         self.client.force_authenticate(user=self.user)
 
+        self.new_user = UserFactory.create()
+        self.empty_cart = CartFactory.create(user=self.new_user)
+
 
     def test_order_cart_should_be_success(self):
         response = self.client.post(f'/v1/carts/{self.cart.id}/orders')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_order_cart_should_failed_with_empty_cart(self):
+        self.client.force_authenticate(user=self.new_user)
+        response = self.client.post(f'/v1/carts/{self.empty_cart.id}/orders')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_order_detail(self):
         order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
