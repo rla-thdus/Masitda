@@ -123,7 +123,7 @@ class CartAPI(APIView):
 
     def post(self, request):
         if Cart.objects.filter(user=request.user, ordered_at=None).exists():
-            cart = Cart.objects.get(user=request.user)
+            cart = Cart.objects.get(user=request.user, ordered_at=None)
         else:
             cart = Cart.objects.create(user=request.user)
 
