@@ -198,6 +198,18 @@ class OrderAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class OrderHistoryAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role == '회원':
+            orders = Order.objects.filter(cart__user=request.user)
+        else:
+            orders = Order.objects.filter(cart__restaurant__user=request.user)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class OrderDetailAPI(APIView):
     permission_classes = [IsAuthenticated, IsMineOrRestaurant]
 

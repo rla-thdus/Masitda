@@ -38,3 +38,16 @@ class OrderAPITest(APITestCase):
         self.assertTrue('total_price' in response.data)
         self.assertTrue('delivery_price' in response.data)
         self.assertTrue('amount_payment' in response.data)
+
+    def test_get_my_order_history(self):
+        self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        response = self.client.get(f'/v1/orders')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_get_restaurant_order_history(self):
+        self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(f'/v1/orders')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
