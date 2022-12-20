@@ -44,3 +44,10 @@ class OrderAPITest(APITestCase):
         response = self.client.get(f'/v1/orders')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    def test_get_restaurant_order_history(self):
+        self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(f'/v1/orders')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
