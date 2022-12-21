@@ -9,6 +9,7 @@ class OrderAPITest(APITestCase):
     def setUp(self):
         self.owner = UserFactory.create(role='사장')
         OrderStatusFactory.create(id=1)
+        OrderStatusFactory.create(id=2, name='주문 취소')
         self.client.force_authenticate(user=self.owner)
         self.restaurant = RestaurantFactory.create(user=self.owner)
         self.menu = MenuFactory.create(restaurant=self.restaurant)
@@ -51,3 +52,9 @@ class OrderAPITest(APITestCase):
         response = self.client.get(f'/v1/orders')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    def test_cancel_order_before_restaurant_accept_order(self):
+        order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.delete(f'/v1/orders/{order.data["id"]}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
