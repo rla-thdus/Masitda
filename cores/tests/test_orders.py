@@ -67,3 +67,9 @@ class OrderAPITest(APITestCase):
         accpet_order.save()
         response = self.client.delete(f'/v1/orders/{order.data["id"]}')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_cancel_order_can_not_allow_to_restaurant_owner(self):
+        order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.delete(f'/v1/orders/{order.data["id"]}')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
