@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine
-from cores.models import Restaurant, Menu, CartItem, Cart, Order
+from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer
 
 
@@ -228,3 +228,16 @@ class OrderDetailAPI(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"message": "NOT_EXISTS_ORDER"}, status=status.HTTP_200_OK)
+
+    def delete(self, request, order_id):
+        if request.user.role != '회원':
+            return Response({'message': 'DOES_NOT_HAVE_PERMISSION'}, status=status.HTTP_403_FORBIDDEN)
+        order = self.get_object(order_id)
+        if None:
+            return Response({'message': 'NOT_EXISTS_ORDER'}, status=status.HTTP_404_NOT_FOUND)
+        if order.order_status.id == 3:
+            return Response({'message': 'ALREADY_ACCEPTED_ORDER'}, status=status.HTTP_400_BAD_REQUEST)
+        order_cancel_status = OrderStatus.objects.get(name='주문 취소')
+        order.order_status=order_cancel_status
+        order.save()
+        return Response({'message': 'CANCEL_ORDER'}, status=status.HTTP_204_NO_CONTENT)
