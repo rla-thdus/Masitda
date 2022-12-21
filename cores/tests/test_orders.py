@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase
 
 from cores.factories import RestaurantFactory, MenuFactory, OrderStatusFactory, CartFactory, CartItemFactory
 from accounts.factories import UserFactory
+from cores.models import Order
 
 
 class OrderAPITest(APITestCase):
@@ -10,6 +11,7 @@ class OrderAPITest(APITestCase):
         self.owner = UserFactory.create(role='사장')
         OrderStatusFactory.create(id=1)
         OrderStatusFactory.create(id=2, name='주문 취소')
+        self.accept = OrderStatusFactory.create(id=3, name='주문 수락')
         self.client.force_authenticate(user=self.owner)
         self.restaurant = RestaurantFactory.create(user=self.owner)
         self.menu = MenuFactory.create(restaurant=self.restaurant)
@@ -55,6 +57,13 @@ class OrderAPITest(APITestCase):
 
     def test_cancel_order_before_restaurant_accept_order(self):
         order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
-        self.client.force_authenticate(user=self.owner)
         response = self.client.delete(f'/v1/orders/{order.data["id"]}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_cancel_order_already_accepted_order_should_failed(self):
+        order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        accpet_order = Order.objects.get(id=order.data['id'])
+        accpet_order.order_status = self.accept
+        accpet_order.save()
+        response = self.client.delete(f'/v1/orders/{order.data["id"]}')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
