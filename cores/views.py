@@ -230,6 +230,8 @@ class OrderDetailAPI(APIView):
             return Response({"message": "NOT_EXISTS_ORDER"}, status=status.HTTP_200_OK)
 
     def delete(self, request, order_id):
+        if request.user.role != '회원':
+            return Response({'message': 'DOES_NOT_HAVE_PERMISSION'}, status=status.HTTP_403_FORBIDDEN)
         order = self.get_object(order_id)
         if None:
             return Response({'message': 'NOT_EXISTS_ORDER'}, status=status.HTTP_404_NOT_FOUND)
