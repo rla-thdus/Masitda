@@ -230,9 +230,11 @@ class OrderDetailAPI(APIView):
             return Response({"message": "NOT_EXISTS_ORDER"}, status=status.HTTP_200_OK)
 
     def delete(self, request, order_id):
-        if not Order.objects.filter(id=order_id).exists():
-            return Response({'message': 'NOT_EXISTS_ORDER'}, status=status.HTTP_404_NOT_FOUND)
         order = self.get_object(order_id)
+        if None:
+            return Response({'message': 'NOT_EXISTS_ORDER'}, status=status.HTTP_404_NOT_FOUND)
+        if order.order_status.id == 3:
+            return Response({'message': 'ALREADY_ACCEPTED_ORDER'}, status=status.HTTP_400_BAD_REQUEST)
         order_cancel_status = OrderStatus.objects.get(name='주문 취소')
         order.order_status=order_cancel_status
         order.save()
