@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -180,17 +181,14 @@ class OrderAPI(APIView):
     permission_classes = [IsAuthenticated, IsMine]
 
     def get_object(self, cart_id):
-        try:
+        if Cart.objects.filter(id=cart_id, ordered_at__isnull=True, restaurant__isnull=False).exists():
             cart = Cart.objects.get(id=cart_id)
             self.check_object_permissions(self.request, cart)
             return cart
-        except ObjectDoesNotExist:
-            return None
+        raise NotFound(detail='INVALID_CART')
 
     def post(self, request, cart_id):
         cart = self.get_object(cart_id)
-        if cart is None or cart.ordered_at is not None or cart.restaurant is None:
-            return Response({'message': 'INVALID_CART'}, status=status.HTTP_404_NOT_FOUND)
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(cart=cart)
