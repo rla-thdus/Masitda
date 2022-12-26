@@ -50,6 +50,10 @@ class Cart(models.Model):
     ordered_at = models.DateTimeField(blank=True, null=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)
 
+    @property
+    def total_price(self):
+        return sum([item.price for item in self.cart_items.all()])
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
@@ -75,7 +79,7 @@ class Order(models.Model):
 
     @property
     def total_price(self):
-        return sum([item.price for item in self.cart.cart_items.all()])
+        return self.cart.total_price
 
     @property
     def delivery_price(self):
@@ -83,7 +87,7 @@ class Order(models.Model):
 
     @property
     def amount_payment(self):
-        return self.total_price + self.delivery_price
+        return self.cart.total_price + self.delivery_price
 
     @property
     def restaurant(self):

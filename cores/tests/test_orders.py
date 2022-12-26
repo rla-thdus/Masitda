@@ -13,12 +13,12 @@ class OrderAPITest(APITestCase):
         OrderStatusFactory.create(id=2, name='주문 취소')
         self.accept = OrderStatusFactory.create(id=3, name='주문 수락')
         self.client.force_authenticate(user=self.owner)
-        self.restaurant = RestaurantFactory.create(user=self.owner)
-        self.menu = MenuFactory.create(restaurant=self.restaurant)
+        self.restaurant = RestaurantFactory.create(user=self.owner, min_order_price=8000)
+        self.menu = MenuFactory.create(restaurant=self.restaurant, price=4000)
 
         self.user = UserFactory.create()
         self.cart = CartFactory.create(user=self.user, restaurant=self.restaurant)
-        self.cart_item = CartItemFactory.create(cart=self.cart, menu=self.menu)
+        self.cart_item = CartItemFactory.create(cart=self.cart, menu=self.menu, quantity=2)
         self.client.force_authenticate(user=self.user)
 
         self.new_user = UserFactory.create()
@@ -28,6 +28,14 @@ class OrderAPITest(APITestCase):
     def test_order_cart_should_be_success(self):
         response = self.client.post(f'/v1/carts/{self.cart.id}/orders')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_order_should_fail_with_does_not_enough_minimum_order_price(self):
+        self.client.force_authenticate(user=self.new_user)
+        c = CartFactory.create(user=self.new_user, restaurant=self.restaurant)
+        CartItemFactory.create(cart=c, menu=self.menu, quantity=1)
+        response = self.client.post(f'/v1/carts/{c.id}/orders')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['message'], 'Order amount less than minimum order amount')
 
     def test_order_cart_should_failed_with_empty_cart(self):
         self.client.force_authenticate(user=self.new_user)
