@@ -79,7 +79,7 @@ class Order(models.Model):
 
     @property
     def total_price(self):
-        return sum([item.price for item in self.cart.cart_items.all()])
+        return self.cart.total_price
 
     @property
     def delivery_price(self):
@@ -87,7 +87,7 @@ class Order(models.Model):
 
     @property
     def amount_payment(self):
-        return self.total_price + self.delivery_price
+        return self.cart.total_price + self.delivery_price
 
     @property
     def restaurant(self):
