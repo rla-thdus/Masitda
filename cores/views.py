@@ -190,6 +190,9 @@ class OrderAPI(APIView):
     def post(self, request, cart_id):
         cart = self.get_object(cart_id)
         serializer = OrderSerializer(data=request.data)
+        if cart.total_price < cart.restaurant.min_order_price:
+            return Response({'message': 'Order amount less than minimum order amount'},
+                            status=status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
             serializer.save(cart=cart)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

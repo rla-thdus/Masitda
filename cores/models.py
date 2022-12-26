@@ -50,6 +50,10 @@ class Cart(models.Model):
     ordered_at = models.DateTimeField(blank=True, null=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)
 
+    @property
+    def total_price(self):
+        return sum([item.price for item in self.cart_items.all()])
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
