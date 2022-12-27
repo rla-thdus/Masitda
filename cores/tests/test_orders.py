@@ -10,8 +10,9 @@ class OrderAPITest(APITestCase):
     def setUp(self):
         self.owner = UserFactory.create(role='사장')
         OrderStatusFactory.create(id=1)
-        OrderStatusFactory.create(id=2, name='주문 취소')
-        self.accept = OrderStatusFactory.create(id=3, name='주문 수락')
+        OrderStatusFactory.create(id=4, name='주문 취소')
+        OrderStatusFactory.create(id=3, name='주문 거절')
+        self.accept = OrderStatusFactory.create(id=2, name='주문 수락')
         self.client.force_authenticate(user=self.owner)
         self.restaurant = RestaurantFactory.create(user=self.owner, min_order_price=8000)
         self.menu = MenuFactory.create(restaurant=self.restaurant, price=4000)
@@ -81,3 +82,23 @@ class OrderAPITest(APITestCase):
         self.client.force_authenticate(user=self.owner)
         response = self.client.delete(f'/v1/orders/{order.data["id"]}')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_accept_order_should_access_with_not_canceled_order(self):
+        data = {'order_status_id': 2}
+        order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.patch(f'/v1/orders/{order.data["id"]}', data=data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_accept_order_should_fail_with_general_user_account(self):
+        order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        response = self.client.patch(f'/v1/orders/{order.data["id"]}')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_accept_order_should_access_with_not_canceled_order(self):
+        data = {'order_status_id': 2}
+        order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
+        self.client.delete(f'/v1/orders/{order.data["id"]}')
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.patch(f'/v1/orders/{order.data["id"]}', data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
