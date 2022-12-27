@@ -239,7 +239,7 @@ class OrderDetailAPI(APIView):
         if request.user.role != '회원':
             return Response({'message': 'DOES_NOT_HAVE_PERMISSION'}, status=status.HTTP_403_FORBIDDEN)
         order = self.get_object(order_id)
-        if order.order_status.id == 3:
+        if order.order_status.id == 2:
             return Response({'message': 'ALREADY_ACCEPTED_ORDER'}, status=status.HTTP_400_BAD_REQUEST)
         order_cancel_status = OrderStatus.objects.get(name='주문 취소')
         order.order_status=order_cancel_status
