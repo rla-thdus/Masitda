@@ -95,7 +95,7 @@ class OrderAPITest(APITestCase):
         response = self.client.patch(f'/v1/orders/{order.data["id"]}')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_accept_order_should_access_with_not_canceled_order(self):
+    def test_accept_order_should_success_with_not_canceled_order(self):
         data = {'order_status_id': 2}
         order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
         self.client.delete(f'/v1/orders/{order.data["id"]}')
@@ -115,7 +115,7 @@ class OrderAPITest(APITestCase):
         response = self.client.patch(f'/v1/orders/{order.data["id"]}')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_deny_order_should_access_with_not_canceled_order(self):
+    def test_deny_order_should_success_with_not_canceled_order(self):
         data = {'order_status_id': 3}
         order = self.client.post(f'/v1/carts/{self.cart.id}/orders')
         self.client.delete(f'/v1/orders/{order.data["id"]}')
