@@ -226,6 +226,15 @@ class OrderDetailAPI(APIView):
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def patch(self, request, order_id):
+        order = self.get_object(order_id)
+        if order.order_status.id == 4:
+            return Response({'message': 'ALREADY_CANCELED_ORDER'}, status=status.HTTP_400_BAD_REQUEST)
+        order_status = OrderStatus.objects.get(id=request.data['order_status_id'])
+        order.order_status = order_status
+        order.save()
+        return Response({'message': 'UPDATE_ORDER_STATUS'}, status=status.HTTP_200_OK)
+
     def delete(self, request, order_id):
         if request.user.role != '회원':
             return Response({'message': 'DOES_NOT_HAVE_PERMISSION'}, status=status.HTTP_403_FORBIDDEN)
