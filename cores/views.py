@@ -227,6 +227,8 @@ class OrderDetailAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, order_id):
+        if request.user.role != '사장':
+            return Response({'message': 'DOES_NOT_HAVE_PERMISSION'}, status=status.HTTP_403_FORBIDDEN)
         order = self.get_object(order_id)
         if order.order_status.id == 4:
             return Response({'message': 'ALREADY_CANCELED_ORDER'}, status=status.HTTP_400_BAD_REQUEST)
