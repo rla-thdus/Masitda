@@ -219,23 +219,17 @@ class OrderDetailAPI(APIView):
             order = Order.objects.get(id=order_id)
             self.check_object_permissions(self.request, order)
             return order
-        else:
-            return None
+        raise NotFound(detail='NOT_EXISTS_ORDER')
 
     def get(self, request, order_id):
         order = self.get_object(order_id)
-        if order is not None:
-            serializer = OrderSerializer(order)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "NOT_EXISTS_ORDER"}, status=status.HTTP_200_OK)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, order_id):
         if request.user.role != '회원':
             return Response({'message': 'DOES_NOT_HAVE_PERMISSION'}, status=status.HTTP_403_FORBIDDEN)
         order = self.get_object(order_id)
-        if None:
-            return Response({'message': 'NOT_EXISTS_ORDER'}, status=status.HTTP_404_NOT_FOUND)
         if order.order_status.id == 3:
             return Response({'message': 'ALREADY_ACCEPTED_ORDER'}, status=status.HTTP_400_BAD_REQUEST)
         order_cancel_status = OrderStatus.objects.get(name='주문 취소')
