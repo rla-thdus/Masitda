@@ -31,6 +31,11 @@ class RestaurantAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, [])
 
+    def test_add_restaurant_should_fail_when_min_order_price_less_than_0(self):
+        self.restaurant_info['min_order_price'] = -1000
+        response = self.client.post('/v1/restaurants', self.restaurant_info)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class RestaurantDetailAPITest(APITestCase):
     def setUp(self):
