@@ -36,6 +36,11 @@ class RestaurantAPITest(APITestCase):
         response = self.client.post('/v1/restaurants', self.restaurant_info)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_add_restaurant_should_fail_when_delivery_price_less_than_0(self):
+        self.restaurant_info['delivery_price'] = -1000
+        response = self.client.post('/v1/restaurants', self.restaurant_info)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class RestaurantDetailAPITest(APITestCase):
     def setUp(self):
