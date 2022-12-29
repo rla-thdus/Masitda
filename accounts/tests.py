@@ -14,27 +14,27 @@ class UserRegisterAPITest(APITestCase):
         self.invalid_user = factory.build(dict, FACTORY_CLASS=UserFactory, email="test@test@test.com")
 
     def test_registration(self):
-        response = self.client.post('/accounts/register', self.user)
+        response = self.client.post('/accounts/users', self.user)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_owner_registration(self):
-        response = self.client.post('/accounts/register', self.owner)
+        response = self.client.post('/accounts/users', self.owner)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_same_user_register_should_return_400(self):
-        self.client.post('/accounts/register', self.user)
-        response = self.client.post('/accounts/register', self.user)
+        self.client.post('/accounts/users', self.user)
+        response = self.client.post('/accounts/users', self.user)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_invalid_data_should_return_400(self):
-        response = self.client.post('/accounts/register', self.invalid_user)
+        response = self.client.post('/accounts/users', self.invalid_user)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginAPITest(APITestCase):
     def setUp(self):
         self.user = factory.build(dict, FACTORY_CLASS=UserFactory)
-        self.client.post('/accounts/register', self.user)
+        self.client.post('/accounts/users', self.user)
 
         self.login_info = {
             "email": self.user.get('email'),
@@ -58,7 +58,7 @@ class UserLoginAPITest(APITestCase):
 class UserLogoutAPITest(APITestCase):
     def setUp(self):
         self.user = factory.build(dict, FACTORY_CLASS=UserFactory)
-        self.client.post('/accounts/register', self.user)
+        self.client.post('/accounts/users', self.user)
         self.login_info = {
             "email": self.user.get('email'),
             "password": self.user.get('password'),
