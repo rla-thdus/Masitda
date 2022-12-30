@@ -47,18 +47,18 @@ class CartAPITest(APITestCase):
 
     def test_get_cart_should_return_200_when_exists_cart(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(f'/v1/carts')
+        response = self.client.get(f'/v1/carts/{self.cart.id}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['user'], self.user.id)
 
-    def test_get_cart_should_return_200_when_not_exists_cart(self):
-        response = self.client.get(f'/v1/carts')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['message'], 'NOT_EXISTS_CART')
+    def test_get_cart_should_return_404_when_not_exists_cart(self):
+        response = self.client.get(f'/v1/carts/{self.cart.id + 1}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['detail'], 'NOT_EXISTS_CART')
 
     def test_delete_exists_cart(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.delete(f'/v1/carts')
+        response = self.client.delete(f'/v1/carts/{self.cart.id}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.data['message'], 'DELETED')
 

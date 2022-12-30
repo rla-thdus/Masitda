@@ -114,14 +114,6 @@ class MenuDetailAPI(APIView):
 class CartAPI(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        if Cart.objects.filter(user=request.user).exists():
-            cart = Cart.objects.get(user=request.user)
-            serializer = CartSerializer(cart)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "NOT_EXISTS_CART"}, status=status.HTTP_200_OK)
-
     def post(self, request):
         if Cart.objects.filter(user=request.user, ordered_at=None).exists():
             cart = Cart.objects.get(user=request.user, ordered_at=None)
@@ -144,10 +136,24 @@ class CartAPI(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
-        if not Cart.objects.filter(user=request.user).exists():
-            return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
-        cart = Cart.objects.get(user=request.user)
+
+class CartDetailAPI(APIView):
+    permission_classes = [IsAuthenticated, IsMine]
+
+    def get_object(self, cart_id):
+        if Cart.objects.filter(id=cart_id).exists():
+            cart = Cart.objects.get(id=cart_id)
+            self.check_object_permissions(self.request, cart)
+            return cart
+        raise NotFound(detail='NOT_EXISTS_CART')
+
+    def get(self, request, cart_id):
+        cart = self.get_object(cart_id)
+        serializer = CartSerializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, cart_id):
+        cart = self.get_object(cart_id)
         cart.delete()
         return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
 
