@@ -136,13 +136,6 @@ class CartAPI(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
-        if not Cart.objects.filter(user=request.user).exists():
-            return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
-        cart = Cart.objects.get(user=request.user)
-        cart.delete()
-        return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
-
 
 class CartDetailAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -154,6 +147,13 @@ class CartDetailAPI(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"message": "NOT_EXISTS_CART"}, status=status.HTTP_200_OK)
+
+    def delete(self, request, cart_id):
+        if not Cart.objects.filter(user=request.user).exists():
+            return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
+        cart = Cart.objects.get(user=request.user)
+        cart.delete()
+        return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class CartItemAPI(APIView):
