@@ -153,9 +153,7 @@ class CartDetailAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, cart_id):
-        if not Cart.objects.filter(user=request.user, id=cart_id).exists():
-            return Response({'message': 'NOT_EXISTS_CART'}, status=status.HTTP_404_NOT_FOUND)
-        cart = Cart.objects.get(user=request.user)
+        cart = self.get_object(cart_id)
         cart.delete()
         return Response({'message': 'DELETED'}, status=status.HTTP_204_NO_CONTENT)
 
