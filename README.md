@@ -11,16 +11,28 @@
 
 ## 구현 기능
 ### User
-- `/register`
-  - 회원가입하는 api 
+- [POST] `/users`
+  - 회원가입하는 api입니다.
   - 이메일, 닉네임 validation 설정
-  - 패스워드는 장고 기본 인증을 따라 DB에 저장될 때 암호화
-- `/login`
-  - 로그인하는 api
-  - DRF의 authToken을 사용해서 토큰을 생성하고 반환
-- `/logout`
-  - 로그아웃하는 api
-  - 해당 계정의 토큰을 삭제
+  - 패스워드는 장고 기본 인증을 따라 DB에 저장될 때 암호화 합니다.
+  - 다음과 같은 내용은 Request Body에 반드시 필요합니다.
+    - `nickname`
+    - `email`
+    - `address`
+    - `password`
+    - `phone`
+    - `role`
+- [POST] `/login`
+  - 로그인하는 api입니다.
+  - DRF의 authToken을 사용해서 토큰을 생성하고 반환 합니다.
+  - 다음과 같은 내용은 Request Body에 반드시 필요합니다.
+    - `email`
+    - `password`
+- [POST] `/logout`
+  - 로그아웃하는 api입니다.
+  - 인증된 유저만 요청할 수 있고, 해당 계정의 토큰을 삭제합니다.
+  - 다음과 같은 내용은 Header에 반드시 필요합니다.
+    - `Authorization: token {token 값}`
 
 ### Restaurant & Menu
 - `/restaurants/`
