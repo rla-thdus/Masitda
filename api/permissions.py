@@ -2,6 +2,8 @@ from datetime import datetime, timezone
 
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+from cores.models import OrderStatus
+
 
 class IsOwnerOrReadOnly(BasePermission):
     def has_permission(self, request, view):
@@ -28,4 +30,7 @@ class IsMineOrRestaurant(BasePermission):
 
 class MyOrder(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.cart.user == request.user and (datetime.now(timezone.utc) - obj.cart.ordered_at).days < 8
+        order_accept = OrderStatus.objects.get(name='주문 수락')
+        return obj.cart.user == request.user \
+               and (datetime.now(timezone.utc) - obj.cart.ordered_at).days < 8 \
+               and obj.order_status == order_accept
