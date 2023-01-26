@@ -93,3 +93,8 @@ class Order(models.Model):
     def restaurant(self):
         return self.cart.restaurant
 
+class Review(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    text = models.TextField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
