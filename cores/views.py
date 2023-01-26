@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 
 from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine
 from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus
-from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer
+from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer, \
+    ReviewSerializer
 
 
 class RestaurantAPI(APIView):
@@ -253,3 +254,21 @@ class OrderDetailAPI(APIView):
         order.order_status=order_cancel_status
         order.save()
         return Response({'message': 'CANCEL_ORDER'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class ReviewAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, order_id):
+        if Order.objects.filter(id=order_id).exists():
+            order = Order.objects.get(id=order_id)
+            return order
+        raise NotFound(detail='INVALID_ORDER')
+
+    def post(self, request, order_id):
+        order = self.get_object(order_id)
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(order=order)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
