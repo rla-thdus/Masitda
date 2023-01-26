@@ -22,3 +22,8 @@ class IsMineOrRestaurant(BasePermission):
             return True
         else:
             return False
+
+
+class MyOrder(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.cart.user == request.user

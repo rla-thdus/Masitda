@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine
+from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine, MyOrder
 from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer, \
     ReviewSerializer
@@ -257,11 +257,12 @@ class OrderDetailAPI(APIView):
 
 
 class ReviewAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, MyOrder]
 
     def get_object(self, order_id):
         if Order.objects.filter(id=order_id).exists():
             order = Order.objects.get(id=order_id)
+            self.check_object_permissions(self.request, order)
             return order
         raise NotFound(detail='INVALID_ORDER')
 
