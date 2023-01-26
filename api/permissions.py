@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
@@ -26,4 +28,4 @@ class IsMineOrRestaurant(BasePermission):
 
 class MyOrder(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.cart.user == request.user
+        return obj.cart.user == request.user and (datetime.now(timezone.utc) - obj.cart.ordered_at).days < 8
