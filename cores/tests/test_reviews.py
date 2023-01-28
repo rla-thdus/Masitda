@@ -40,3 +40,9 @@ class ReviewAPITest(APITestCase):
         self.client.force_authenticate(user=self.new_user)
         response = self.client.post(f'/v1/orders/{self.order.id}/reviews', data=self.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_review_should_fail_with_expire_date_passed(self):
+        self.cart.ordered_at = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=8)
+        self.cart.save()
+        response = self.client.post(f'/v1/orders/{self.order.id}/reviews', data=self.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
