@@ -52,3 +52,7 @@ class ReviewAPITest(APITestCase):
         self.order.save()
         response = self.client.post(f'/v1/orders/{self.order.id}/reviews', data=self.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_review_should_fail_with_not_enough_data(self):
+        response = self.client.post(f'/v1/orders/{self.order.id}/reviews')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
