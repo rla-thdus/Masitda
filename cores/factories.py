@@ -1,6 +1,8 @@
+import datetime
+
 import factory
 
-from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus
+from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus, Order
 from accounts.factories import fake
 
 
@@ -57,3 +59,10 @@ class OrderStatusFactory(factory.django.DjangoModelFactory):
         model = OrderStatus
 
     name = factory.Faker('name')
+
+class OrderFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Order
+
+    cart = ''
+    order_status = ''
