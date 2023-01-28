@@ -14,7 +14,7 @@ class ReviewAPITest(APITestCase):
         self.owner = UserFactory.create(role='사장')
         OrderStatusFactory.create(id=1)
         self.accept = OrderStatusFactory.create(id=2, name='주문 수락')
-        OrderStatusFactory.create(id=3, name='주문 거절')
+        self.deny = OrderStatusFactory.create(id=3, name='주문 거절')
         self.client.force_authenticate(user=self.owner)
         self.restaurant = RestaurantFactory.create(user=self.owner, min_order_price=8000)
         self.menu = MenuFactory.create(restaurant=self.restaurant, price=4000)
@@ -44,5 +44,11 @@ class ReviewAPITest(APITestCase):
     def test_review_should_fail_with_expire_date_passed(self):
         self.cart.ordered_at = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=8)
         self.cart.save()
+        response = self.client.post(f'/v1/orders/{self.order.id}/reviews', data=self.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_review_should_fail_with_not_accepted_order(self):
+        self.order.order_status = self.deny
+        self.order.save()
         response = self.client.post(f'/v1/orders/{self.order.id}/reviews', data=self.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
