@@ -36,3 +36,7 @@ class ReviewAPITest(APITestCase):
         response = self.client.post(f'/v1/orders/{self.order.id}/reviews', data=self.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_review_should_fail_with_not_own_order(self):
+        self.client.force_authenticate(user=self.new_user)
+        response = self.client.post(f'/v1/orders/{self.order.id}/reviews', data=self.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
