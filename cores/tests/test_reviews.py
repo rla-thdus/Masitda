@@ -66,3 +66,9 @@ class ReviewAPITest(APITestCase):
         self.client.force_authenticate(user=self.owner)
         response = self.client.delete(f'/v1/reviews/{self.review.id}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_review_should_fail_with_not_review_owner(self):
+        self.review = ReviewFactory(order=self.order)
+        self.client.force_authenticate(user=self.new_user)
+        response = self.client.delete(f'/v1/reviews/{self.review.id}')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
