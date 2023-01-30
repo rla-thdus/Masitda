@@ -80,3 +80,8 @@ class ReviewAPITest(APITestCase):
         self.client.force_authenticate(user=self.owner2)
         response = self.client.delete(f'/v1/reviews/{self.review.id}')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_review_should_fail_not_exist_review(self):
+        self.review = ReviewFactory(order=self.order)
+        response = self.client.delete(f'/v1/reviews/{self.review.id+1}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
