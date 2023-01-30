@@ -11,11 +11,13 @@ from accounts.factories import UserFactory
 class ReviewAPITest(APITestCase):
     def setUp(self):
         self.owner = UserFactory.create(role='사장')
+        self.owner2 = UserFactory.create(role='사장')
         OrderStatusFactory.create(id=1)
         self.accept = OrderStatusFactory.create(id=2, name='주문 수락')
         self.deny = OrderStatusFactory.create(id=3, name='주문 거절')
         self.client.force_authenticate(user=self.owner)
         self.restaurant = RestaurantFactory.create(user=self.owner, min_order_price=8000)
+        self.restaurant2 = RestaurantFactory.create(user=self.owner2, min_order_price=8000)
         self.menu = MenuFactory.create(restaurant=self.restaurant, price=4000)
 
         self.user = UserFactory.create()
@@ -70,5 +72,11 @@ class ReviewAPITest(APITestCase):
     def test_delete_review_should_fail_with_not_review_owner(self):
         self.review = ReviewFactory(order=self.order)
         self.client.force_authenticate(user=self.new_user)
+        response = self.client.delete(f'/v1/reviews/{self.review.id}')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_review_should_fail_with_different_restaurant_owner(self):
+        self.review = ReviewFactory(order=self.order)
+        self.client.force_authenticate(user=self.owner2)
         response = self.client.delete(f'/v1/reviews/{self.review.id}')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
