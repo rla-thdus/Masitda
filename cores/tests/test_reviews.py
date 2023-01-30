@@ -56,7 +56,13 @@ class ReviewAPITest(APITestCase):
         response = self.client.post(f'/v1/orders/{self.order.id}/reviews')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_delete_review_should_success(self):
+    def test_delete_review_should_success_by_review_owner(self):
         self.review = ReviewFactory(order=self.order)
+        response = self.client.delete(f'/v1/reviews/{self.review.id}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_review_should_success_by_restaurant_owner(self):
+        self.review = ReviewFactory(order=self.order)
+        self.client.force_authenticate(user=self.owner)
         response = self.client.delete(f'/v1/reviews/{self.review.id}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
