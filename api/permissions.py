@@ -34,3 +34,8 @@ class MyOrder(BasePermission):
         return obj.cart.user == request.user \
                and (datetime.now(timezone.utc) - obj.cart.ordered_at).days < 8 \
                and obj.order_status == order_accept
+
+
+class IsReviewOwnerOrRestaurantOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user or obj.restaurant.user == request.user
