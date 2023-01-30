@@ -98,3 +98,11 @@ class Review(models.Model):
     text = models.TextField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def user(self):
+        return self.order.cart.user
+
+    @property
+    def restaurant(self):
+        return self.order.restaurant
+
