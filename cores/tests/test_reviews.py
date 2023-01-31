@@ -91,3 +91,8 @@ class ReviewAPITest(APITestCase):
         response = self.client.get(f'/v1/users/{self.user.id}/reviews')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(len(response.data) == 1)
+
+    def test_get_other_user_review_histories_should_fail(self):
+        self.review = ReviewFactory(order=self.order)
+        response = self.client.get(f'/v1/users/{self.new_user.id}/reviews')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
