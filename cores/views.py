@@ -287,7 +287,7 @@ class ReviewListAPI(APIView):
 
     def get(self, request, user_id):
         reviews = self.get_object(user_id)
-        serializer = ReviewSerializer(reviews)
+        serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
