@@ -39,3 +39,9 @@ class MyOrder(BasePermission):
 class IsReviewOwnerOrRestaurantOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user or obj.restaurant.user == request.user
+
+
+class HasPermission(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.id == view.kwargs.get('user_id')
+

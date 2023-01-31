@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine, MyOrder, IsReviewOwnerOrRestaurantOwner
+from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine, MyOrder, IsReviewOwnerOrRestaurantOwner, \
+    HasPermission
 from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus, Review
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer, \
     ReviewSerializer
@@ -273,6 +274,21 @@ class ReviewAPI(APIView):
             serializer.save(order=order)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReviewListAPI(APIView):
+    permission_classes = [IsAuthenticated, HasPermission]
+
+    def get_object(self, user_id):
+        if Review.objects.filter(order__cart__user_id=user_id).exists():
+            reviews = Review.objects.filter(order__cart__user_id=user_id)
+            self.check_object_permissions(self.request, reviews)
+            return reviews
+
+    def get(self, request, user_id):
+        reviews = self.get_object(user_id)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ReviewDetailAPI(APIView):
