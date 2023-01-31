@@ -85,3 +85,9 @@ class ReviewAPITest(APITestCase):
         self.review = ReviewFactory(order=self.order)
         response = self.client.delete(f'/v1/reviews/{self.review.id+1}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_own_review_histories_should_success(self):
+        self.review = ReviewFactory(order=self.order)
+        response = self.client.get(f'/v1/users/{self.user.id}/reviews')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(response.data) == 1)
