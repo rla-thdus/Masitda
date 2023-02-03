@@ -32,6 +32,8 @@ class Restaurant(models.Model):
     @property
     def rating_avg(self):
         reviews = Review.objects.filter(order__cart__restaurant_id=self.id)
+        if len(reviews) == 0:
+            return 0
         return f"{sum([item.rating for item in reviews]) / len(reviews):.1f}"
 
 
