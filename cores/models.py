@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from rest_framework.exceptions import ValidationError
@@ -96,6 +97,7 @@ class Order(models.Model):
 class Review(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     text = models.TextField(max_length=100)
+    rating = models.IntegerField(default=1, validators=[MaxValueValidator(5), MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
