@@ -13,6 +13,7 @@ class MenuSerializer(serializers.ModelSerializer):
 class RestaurantSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
     menu_set = MenuSerializer(many=True, read_only=True)
+    rating_avg = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Restaurant

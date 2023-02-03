@@ -29,6 +29,11 @@ class Restaurant(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True)
 
+    @property
+    def rating_avg(self):
+        reviews = Review.objects.filter(order__cart__restaurant_id=self.id)
+        return f"{sum([item.rating for item in reviews]) / len(reviews):.1f}"
+
 
 class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
