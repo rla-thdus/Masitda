@@ -59,6 +59,11 @@ class RestaurantDetailAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('menu_set' in response.content.decode())
 
+    def test_get_restaurant_should_return_rating_avg(self):
+        response = self.client.get(f'/v1/restaurants/{self.restaurant.id}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('rating_avg' in response.content.decode())
+
     def test_update_restaurant_only_can_owner(self):
         update_data = {"name": "change name success"}
         response = self.client.patch(f'/v1/restaurants/{self.restaurant.id}', update_data)

@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from rest_framework.exceptions import ValidationError
@@ -27,6 +28,13 @@ class Restaurant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True)
+
+    @property
+    def rating_avg(self):
+        reviews = Review.objects.filter(order__cart__restaurant_id=self.id)
+        if len(reviews) == 0:
+            return 0
+        return f"{sum([item.rating for item in reviews]) / len(reviews):.1f}"
 
 
 class Menu(models.Model):
@@ -96,6 +104,7 @@ class Order(models.Model):
 class Review(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     text = models.TextField(max_length=100)
+    rating = models.FloatField(default=1, validators=[MaxValueValidator(5.0), MinValueValidator(0.5)])
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
