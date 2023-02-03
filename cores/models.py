@@ -97,7 +97,7 @@ class Order(models.Model):
 class Review(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     text = models.TextField(max_length=100)
-    rating = models.IntegerField(default=1, validators=[MaxValueValidator(5), MinValueValidator(1)])
+    rating = models.FloatField(default=1, validators=[MaxValueValidator(5.0), MinValueValidator(0.5)])
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
