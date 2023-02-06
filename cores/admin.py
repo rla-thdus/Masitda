@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus, Order, Review
+from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus, Order, Review, Comment
 
 
 @admin.register(Restaurant)
@@ -56,3 +56,8 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ['id', 'order', 'text', 'created_at']
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id', 'review', 'text', 'created_at']
