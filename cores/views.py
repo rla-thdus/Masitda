@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine, MyOrder, IsReviewOwnerOrRestaurantOwner, \
-    HasPermission
+    HasPermission, IsReviewRestaurantOwner
 from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus, Review
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer, \
     ReviewSerializer, CommentSerializer
@@ -308,7 +308,7 @@ class ReviewDetailAPI(APIView):
 
 
 class CommentAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsReviewRestaurantOwner]
 
     def get_object(self, review_id):
         if Review.objects.filter(id=review_id).exists():

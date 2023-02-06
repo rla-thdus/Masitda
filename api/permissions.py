@@ -45,3 +45,8 @@ class HasPermission(BasePermission):
     def has_permission(self, request, view):
         return request.user.id == view.kwargs.get('user_id')
 
+
+class IsReviewRestaurantOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj.order.cart.restaurant.user
+
