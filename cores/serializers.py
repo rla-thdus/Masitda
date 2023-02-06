@@ -1,4 +1,4 @@
-from .models import Restaurant, Menu, CartItem, Cart, Order, Review
+from .models import Restaurant, Menu, CartItem, Cart, Order, Review, Comment
 from rest_framework import serializers
 
 
@@ -73,4 +73,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    review = ReviewSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Comment
         fields = '__all__'

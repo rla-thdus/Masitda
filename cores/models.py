@@ -115,3 +115,8 @@ class Review(models.Model):
     def restaurant(self):
         return self.order.restaurant
 
+
+class Comment(models.Model):
+    review = models.OneToOneField(Review, on_delete=models.CASCADE)
+    text = models.TextField(max_length=300)
+    created_at = models.DateTimeField(auto_now_add=True)
