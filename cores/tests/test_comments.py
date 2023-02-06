@@ -47,3 +47,7 @@ class ReviewAPITest(APITestCase):
         self.client.force_authenticate(user=self.owner2)
         response = self.client.post(f'/v1/reviews/{self.review.id}/comments', data=self.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_add_review_comment_should_fail_with_not_enough_data(self):
+        response = self.client.post(f'/v1/reviews/{self.review.id}/comments')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
