@@ -9,7 +9,7 @@ from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine, MyOrd
     HasPermission
 from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus, Review
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer, \
-    ReviewSerializer
+    ReviewSerializer, CommentSerializer
 
 
 class RestaurantAPI(APIView):
@@ -305,3 +305,22 @@ class ReviewDetailAPI(APIView):
         review = self.get_object(review_id)
         review.delete()
         return Response({'message': 'delete review'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, review_id):
+        if Review.objects.filter(id=review_id).exists():
+            review = Review.objects.get(id=review_id)
+            self.check_object_permissions(self.request, review)
+            return review
+        raise NotFound(detail='INVALID_REVIEW')
+
+    def post(self, request, review_id):
+        review = self.get_object(review_id)
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(review=review)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
