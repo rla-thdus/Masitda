@@ -38,3 +38,7 @@ class ReviewAPITest(APITestCase):
     def test_add_review_comment_success(self):
         response = self.client.post(f'/v1/reviews/{self.review.id}/comments', data=self.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_add_review_comment_should_fail_with_not_exists_review(self):
+        response = self.client.post(f'/v1/reviews/{self.review.id + 1}/comments', data=self.data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
