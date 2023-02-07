@@ -56,3 +56,8 @@ class ReviewAPITest(APITestCase):
         comment = CommentFactory(review=self.review)
         response = self.client.delete(f'/v1/reviews/{self.review.id}/comments/{comment.id}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_review_comment_should_fail_with_not_exists_comment(self):
+        comment = CommentFactory(review=self.review)
+        response = self.client.delete(f'/v1/reviews/{self.review.id}/comments/{comment.id + 1}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
