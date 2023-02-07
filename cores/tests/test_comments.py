@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from cores.factories import RestaurantFactory, MenuFactory, OrderStatusFactory, CartFactory, CartItemFactory, \
-    OrderFactory, ReviewFactory
+    OrderFactory, ReviewFactory, CommentFactory
 from accounts.factories import UserFactory
 
 
@@ -51,3 +51,8 @@ class ReviewAPITest(APITestCase):
     def test_add_review_comment_should_fail_with_not_enough_data(self):
         response = self.client.post(f'/v1/reviews/{self.review.id}/comments')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete_review_comment_should_success(self):
+        comment = CommentFactory(review=self.review)
+        response = self.client.delete(f'/v1/reviews/{self.review.id}/comments/{comment.id}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
