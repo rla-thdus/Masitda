@@ -72,3 +72,8 @@ class ReviewAPITest(APITestCase):
     def test_delete_review_comment_should_fail_with_not_match_review_and_comment(self):
         response = self.client.delete(f'/v1/reviews/{self.review.id}/comments/{self.comment2.id}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_review_comment_should_fail_with_invalid_permission_owner(self):
+        self.client.force_authenticate(user=self.owner2)
+        response = self.client.delete(f'/v1/reviews/{self.review2.id}/comments/{self.comment2.id}')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
