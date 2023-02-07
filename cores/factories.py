@@ -1,8 +1,6 @@
-import datetime
-
 import factory
 
-from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus, Order, Review
+from cores.models import Restaurant, FoodCategory, Menu, Cart, CartItem, OrderStatus, Order, Review, Comment
 from accounts.factories import fake
 
 
@@ -73,3 +71,10 @@ class ReviewFactory(factory.django.DjangoModelFactory):
         model = Review
 
     order = ''
+
+
+class CommentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Comment
+
+    review = ''

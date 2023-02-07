@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine, MyOrder, IsReviewOwnerOrRestaurantOwner, \
     HasPermission, IsReviewRestaurantOwner
-from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus, Review
+from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus, Review, Comment
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer, \
     ReviewSerializer, CommentSerializer
 
@@ -324,3 +324,20 @@ class CommentAPI(APIView):
             serializer.save(review=review)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CommentDetailAPI(APIView):
+    permission_classes = [IsAuthenticated, IsReviewRestaurantOwner]
+
+    def get_object(self, review_id, comment_id):
+        if Comment.objects.filter(id=comment_id, review_id=review_id).exists():
+            comment = Comment.objects.get(id=comment_id, review_id=review_id)
+            self.check_object_permissions(self.request, comment)
+            return comment
+        raise NotFound(detail='INVALID_COMMENT')
+
+    def delete(self, request, review_id, comment_id):
+        comment = self.get_object(review_id, comment_id)
+        comment.delete()
+        return Response({'message': 'DELETE_COMMENT'}, status=status.HTTP_204_NO_CONTENT)
+

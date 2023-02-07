@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from cores.factories import RestaurantFactory, MenuFactory, OrderStatusFactory, CartFactory, CartItemFactory, \
-    OrderFactory, ReviewFactory
+    OrderFactory, ReviewFactory, CommentFactory
 from accounts.factories import UserFactory
 
 
@@ -21,6 +21,15 @@ class ReviewAPITest(APITestCase):
         self.menu = MenuFactory.create(restaurant=self.restaurant, price=4000)
 
         self.user = UserFactory.create()
+
+        cart = CartFactory.create(user=self.user, restaurant=self.restaurant)
+        cart.ordered_at = datetime.datetime.now(datetime.timezone.utc)
+        cart.save()
+        cart_item = CartItemFactory.create(cart=cart, menu=self.menu, quantity=2)
+        order = OrderFactory(cart=cart, order_status=self.accept)
+        self.review2 = ReviewFactory(order=order)
+        self.comment2 = CommentFactory(review=self.review2)
+
         self.cart = CartFactory.create(user=self.user, restaurant=self.restaurant)
         self.cart.ordered_at = datetime.datetime.now(datetime.timezone.utc)
         self.cart.save()
@@ -51,3 +60,20 @@ class ReviewAPITest(APITestCase):
     def test_add_review_comment_should_fail_with_not_enough_data(self):
         response = self.client.post(f'/v1/reviews/{self.review.id}/comments')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete_review_comment_should_success(self):
+        response = self.client.delete(f'/v1/reviews/{self.review2.id}/comments/{self.comment2.id}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_review_comment_should_fail_with_not_exists_comment(self):
+        response = self.client.delete(f'/v1/reviews/{self.review2.id}/comments/{self.comment2.id + 1}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_review_comment_should_fail_with_not_match_review_and_comment(self):
+        response = self.client.delete(f'/v1/reviews/{self.review.id}/comments/{self.comment2.id}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_review_comment_should_fail_with_invalid_permission_owner(self):
+        self.client.force_authenticate(user=self.owner2)
+        response = self.client.delete(f'/v1/reviews/{self.review2.id}/comments/{self.comment2.id}')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
