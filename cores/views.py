@@ -59,6 +59,20 @@ class RestaurantDetailAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class RestaurantReviewAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, restaurant_id):
+        if Review.objects.filter(order__cart__restaurant_id=restaurant_id).exists():
+            return Review.objects.filter(order__cart__restaurant_id=restaurant_id)
+        raise NotFound(detail='DOES_NOT_HAVE_REVIEW')
+
+    def get(self, request, restaurant_id):
+        reviews = self.get_object(restaurant_id)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class MenuAPI(APIView):
     permission_classes = [IsOwnerOrReadOnly]
 
