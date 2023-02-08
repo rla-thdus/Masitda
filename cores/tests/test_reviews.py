@@ -96,3 +96,9 @@ class ReviewAPITest(APITestCase):
         self.review = ReviewFactory(order=self.order)
         response = self.client.get(f'/v1/users/{self.new_user.id}/reviews')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_restaurant_review_should_success(self):
+        self.review = ReviewFactory(order=self.order)
+        response = self.client.get(f'/v1/restaurants/{self.restaurant.id}/reviews')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
