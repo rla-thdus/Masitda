@@ -77,8 +77,18 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    review = ReviewSerializer(read_only=True, many=False)
+    review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Comment
+        fields = '__all__'
+
+
+class ReviewListSerializer(serializers.ModelSerializer):
+    order_id = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+    comment = CommentSerializer(read_only=True, many=False)
+    user = serializers.CharField()
+
+    class Meta:
+        model = Review
         fields = '__all__'
