@@ -112,12 +112,20 @@ class Review(models.Model):
         return self.order.cart.user
 
     @property
+    def nickname(self):
+        return self.user.nickname
+
+    @property
     def restaurant(self):
         return self.order.restaurant
 
+    @property
+    def comment(self):
+        return self.review_comment
+
 
 class Comment(models.Model):
-    review = models.OneToOneField(Review, on_delete=models.CASCADE)
+    review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name='review_comment')
     text = models.TextField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
 
