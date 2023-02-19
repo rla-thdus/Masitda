@@ -84,6 +84,16 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ReviewDetailSerializer(serializers.ModelSerializer):
+    order = serializers.PrimaryKeyRelatedField(read_only=True)
+    comment = CommentSerializer()
+
+    class Meta:
+        model = Review
+        fields = ['id', 'order', 'text', 'rating', 'created_at', 'comment']
+
+
+
 class ReviewListSerializer(serializers.ModelSerializer):
     order_id = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
     comment = CommentSerializer(read_only=True, many=False)
