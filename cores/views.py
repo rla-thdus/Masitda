@@ -9,7 +9,7 @@ from api.permissions import IsOwnerOrReadOnly, IsMineOrRestaurant, IsMine, MyOrd
     HasPermission, IsReviewRestaurantOwner
 from cores.models import Restaurant, Menu, CartItem, Cart, Order, OrderStatus, Review, Comment
 from cores.serializers import RestaurantSerializer, MenuSerializer, CartItemSerializer, CartSerializer, OrderSerializer, \
-    ReviewSerializer, CommentSerializer, ReviewListSerializer
+    ReviewSerializer, CommentSerializer, ReviewListSerializer, ReviewDetailSerializer
 
 
 class RestaurantAPI(APIView):
@@ -301,7 +301,7 @@ class ReviewListAPI(APIView):
 
     def get(self, request, user_id):
         reviews = self.get_object(user_id)
-        serializer = ReviewSerializer(reviews, many=True)
+        serializer = ReviewDetailSerializer(reviews, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
