@@ -146,10 +146,20 @@ masitda
       - 자신이 주문했던 것에 대해서만 리뷰를 남길 수 있습니다.
 - **[리뷰 삭제]**
   - `/v1/reviews/<int:review_id>`
-    - [delete]
+    - [DELETE]
       - 자신이 등록했던 리뷰를 삭제하는 api입니다.
       - 리뷰가 존재하지 않으면 `Not Found`를 반환합니다.
 - **[리뷰 기록 요청]**
   - `/v1/users/<int:user_id>/reviews`
     - [GET]
       - 자신이 그동안 남긴 리뷰들을 확인하는 api입니다.
+
+### Comment
+- **[답글 등록]**
+  - `v1/reviews/<int:review_id>/comments`
+  - [POST]
+    - 자신의 음식점에 달린 리뷰에 답글 등록하는 api 입니다.
+- **[답글 삭제]**
+  - `v1/reviews/<int:review_id>/comments/<int:comment_id>`
+  - [DELETE]
+    - 리뷰에 단 답글을 삭제하는 api 입니다.
