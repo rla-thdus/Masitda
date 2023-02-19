@@ -24,7 +24,7 @@ masitda
 ```
 
 # 데이터베이스 ERD
-
+![](./masitda_erd.png)
 
 # 기능 설명
 ### User
